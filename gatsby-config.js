@@ -1,14 +1,25 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+});
+
 module.exports = {
   siteMetadata: {
     siteUrl: "https://www.yourdomain.tld",
     title: "Genuine Builders",
   },
   plugins: [
+    // {
+      // resolve: "gatsby-source-contentful",
+      // options: {
+        // accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+        // spaceId: process.env.CONTENTFUL_SPACE_ID,
+      // },
+    // },
     {
-      resolve: "gatsby-source-contentful",
+      resolve: `gatsby-plugin-portal`,
       options: {
-        accessToken: "",
-        spaceId: "",
+        key: 'portal',
+        id: 'portal',
       },
     },
     "gatsby-plugin-styled-components",

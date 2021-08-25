@@ -1,184 +1,130 @@
-import * as React from "react"
+import React from 'react';
+import styled from 'styled-components';
+import screw from '../images/temp/screwBulletSmall.png';
 
-// styles
-const pageStyles = {
-  color: "#232129",
-  padding: 96,
-  fontFamily: "-apple-system, Roboto, sans-serif, serif",
-}
-const headingStyles = {
-  marginTop: 0,
-  marginBottom: 64,
-  maxWidth: 320,
-}
-const headingAccentStyles = {
-  color: "#663399",
-}
-const paragraphStyles = {
-  marginBottom: 48,
-}
-const codeStyles = {
-  color: "#8A6534",
-  padding: 4,
-  backgroundColor: "#FFF4DB",
-  fontSize: "1.25rem",
-  borderRadius: 4,
-}
-const listStyles = {
-  marginBottom: 96,
-  paddingLeft: 0,
-}
-const listItemStyles = {
-  fontWeight: 300,
-  fontSize: 24,
-  maxWidth: 560,
-  marginBottom: 30,
-}
+import { Reviews } from '../components/Reviews.js';
+import { Carousel } from '../components/Carousel.js';
 
-const linkStyle = {
-  color: "#8954A8",
-  fontWeight: "bold",
-  fontSize: 16,
-  verticalAlign: "5%",
-}
+// if Twitter follow button and/or timeline is wanting to be kept
+// https://www.gatsbyjs.com/plugins/gatsby-plugin-twitter/
 
-const docLinkStyle = {
-  ...linkStyle,
-  listStyleType: "none",
-  marginBottom: 24,
-}
+export default function Main() {
+    return (
+        <StyledMain>
+            <MainContent>
+                <List>
+                    <ListItem>Extensions</ListItem>
+                    <ListItem>Property Repairs</ListItem>
+                    <ListItem>Conversions</ListItem>
+                    <ListItem>External Works</ListItem>
+                    <ListItem>Business premises maintained</ListItem>
+                </List>
+                <Carousel duration="5000"/>
+                <Text>Genuine Builders serves the North Yorkshire community.</Text>
+                <Text>We specialize in Design / Building, and we offer an exceptional and reliable service. In addition, our friendly and professional staff are here to answer any questions you may have about our company or our services.</Text>
+                <Text>Whatever type of building work you require, at Genuine Builders our goal is to provide you with a courteous, expedient, and professional service of the highest calibre.</Text>
+                <Text>If you have any questions or would like to contact us, please e-mail us at <Contact href="mailto:info@genuinebuilders.co.uk">info@genuinebuilders.co.uk</Contact> or call us at <Contact href="tel:01904-708-121">01904 708 121</Contact>.</Text>
+                <Motto>At Genuine Builders, the customer always comes first</Motto>
+                <SecondaryContent>
+                    <Reviews fade="1000" duration="5000"/>
+                    <Guarantee>We always perform to the highest standard. The testimonials above show that we always get 100% satisfaction from our customers and do our utmost to please.</Guarantee>
+                </SecondaryContent>
+                {/* <Twitter>Tweets by GenuineBuilders</Twitter> */}
+            </MainContent>
+        </StyledMain>
+    )
+};
 
-const descriptionStyle = {
-  color: "#232129",
-  fontSize: 14,
-  marginTop: 10,
-  marginBottom: 0,
-  lineHeight: 1.25,
-}
+const StyledMain = styled.main`
+    margin: 1em;
+`;
 
-const docLink = {
-  text: "Documentation",
-  url: "https://www.gatsbyjs.com/docs/",
-  color: "#8954A8",
-}
+const MainContent = styled.div`
+    max-width: 780px;
+    margin: 2em auto;
+    padding: 1em 2em;
+    background-color: #2a3035;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #333333;
+    @media only screen and (max-width: 560px) {
+        padding: 1em;
+    }
+`;
 
-const badgeStyle = {
-  color: "#fff",
-  backgroundColor: "#088413",
-  border: "1px solid #088413",
-  fontSize: 11,
-  fontWeight: "bold",
-  letterSpacing: 1,
-  borderRadius: 4,
-  padding: "4px 6px",
-  display: "inline-block",
-  position: "relative",
-  top: -2,
-  marginLeft: 10,
-  lineHeight: 1,
-}
+const List = styled.ul`
+    list-style-type: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 39ex;
+    text-align: center;
+    @media only screen and (max-width: 768px) {
+        display: none;
+    }
+`;
 
-// data
-const links = [
-  {
-    text: "Tutorial",
-    url: "https://www.gatsbyjs.com/docs/tutorial/",
-    description:
-      "A great place to get started if you're new to web development. Designed to guide you through setting up your first Gatsby site.",
-    color: "#E95800",
-  },
-  {
-    text: "How to Guides",
-    url: "https://www.gatsbyjs.com/docs/how-to/",
-    description:
-      "Practical step-by-step guides to help you achieve a specific goal. Most useful when you're trying to get something done.",
-    color: "#1099A8",
-  },
-  {
-    text: "Reference Guides",
-    url: "https://www.gatsbyjs.com/docs/reference/",
-    description:
-      "Nitty-gritty technical descriptions of how Gatsby works. Most useful when you need detailed information about Gatsby's APIs.",
-    color: "#BC027F",
-  },
-  {
-    text: "Conceptual Guides",
-    url: "https://www.gatsbyjs.com/docs/conceptual/",
-    description:
-      "Big-picture explanations of higher-level Gatsby concepts. Most useful for building understanding of a particular topic.",
-    color: "#0D96F2",
-  },
-  {
-    text: "Plugin Library",
-    url: "https://www.gatsbyjs.com/plugins",
-    description:
-      "Add functionality and customize your Gatsby site or app with thousands of plugins built by our amazing developer community.",
-    color: "#8EB814",
-  },
-  {
-    text: "Build and Host",
-    url: "https://www.gatsbyjs.com/cloud",
-    badge: true,
-    description:
-      "Now you’re ready to show the world! Give your Gatsby site superpowers: Build and host on Gatsby Cloud. Get started for free!",
-    color: "#663399",
-  },
-]
+const ListItem = styled.li`
+    display: inline;
+    color: #a0df6d;
+    font-size: small;
+    &:before {
+        margin: 1ex;
+        content: url(${screw});
+    }
+    &:nth-child(odd) {
+        color: #52af07;
+    }
+    &:nth-child(3):after {
+        margin: 1ex;
+        content: url(${screw});
+    }
+    &:nth-child(5):after {
+        margin: 1ex;
+        content: url(${screw});
+    }
+`;
 
-// markup
-const IndexPage = () => {
-  return (
-    <main style={pageStyles}>
-      <title>Home Page</title>
-      <h1 style={headingStyles}>
-        Congratulations
-        <br />
-        <span style={headingAccentStyles}>— you just made a Gatsby site! </span>
-        <span role="img" aria-label="Party popper emojis">
-          🎉🎉🎉
-        </span>
-      </h1>
-      <p style={paragraphStyles}>
-        Edit <code style={codeStyles}>src/pages/index.js</code> to see this page
-        update in real-time.{" "}
-        <span role="img" aria-label="Sunglasses smiley emoji">
-          😎
-        </span>
-      </p>
-      <ul style={listStyles}>
-        <li style={docLinkStyle}>
-          <a
-            style={linkStyle}
-            href={`${docLink.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter`}
-          >
-            {docLink.text}
-          </a>
-        </li>
-        {links.map(link => (
-          <li key={link.url} style={{ ...listItemStyles, color: link.color }}>
-            <span>
-              <a
-                style={linkStyle}
-                href={`${link.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter`}
-              >
-                {link.text}
-              </a>
-              {link.badge && (
-                <span style={badgeStyle} aria-label="New Badge">
-                  NEW!
-                </span>
-              )}
-              <p style={descriptionStyle}>{link.description}</p>
-            </span>
-          </li>
-        ))}
-      </ul>
-      <img
-        alt="Gatsby G Logo"
-        src="data:image/svg+xml,%3Csvg width='24' height='24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2a10 10 0 110 20 10 10 0 010-20zm0 2c-3.73 0-6.86 2.55-7.75 6L14 19.75c3.45-.89 6-4.02 6-7.75h-5.25v1.5h3.45a6.37 6.37 0 01-3.89 4.44L6.06 9.69C7 7.31 9.3 5.63 12 5.63c2.13 0 4 1.04 5.18 2.65l1.23-1.06A7.959 7.959 0 0012 4zm-8 8a8 8 0 008 8c.04 0 .09 0-8-8z' fill='%23639'/%3E%3C/svg%3E"
-      />
-    </main>
-  )
-}
+const Text = styled.p`
+    margin: 0;
+`;
 
-export default IndexPage
+const Contact = styled.a`
+    text-decoration: none;
+    font-weight: bold;
+    color: lightgreen;
+`;
+
+const Motto = styled.h3`
+    color: white;
+    text-align: center;
+    font-weight: normal;
+`;
+
+const SecondaryContent = styled.div`
+    /* display: inline-block; */
+    /* width: 40%; */
+    
+    /* remove below (except media query), uncomment above 
+    for layout w/ twitter timeline */
+    display: block;
+    width: 90%;
+    text-align: center;
+    margin: 0 auto;
+    @media only screen and (max-width: 560px) {
+        width: 100%;
+        padding: 0em 0.5em;
+    }
+`;
+
+const Guarantee = styled.p`
+    background-color: #475159;
+    padding: 1em;
+    @media only screen and (max-width: 560px) {
+        display: none;
+    }
+`;
+
+// const Twitter = styled.a`
+//     width: 50%;
+//     vertical-align: top;
+//     color: white;
+// `;
