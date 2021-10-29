@@ -2,36 +2,77 @@ import React from 'react';
 import styled from 'styled-components';
 import screw from '../images/temp/screwBulletSmall.png';
 
-import { Reviews } from '../components/Reviews.js';
-import { Carousel } from '../components/Carousel.js';
+import { Reviews } from '../components/Reviews';
+import { Carousel } from '../components/Carousel';
+import { graphql } from 'gatsby';
+import { renderRichText } from 'gatsby-source-contentful/rich-text';
+import { BLOCKS, INLINES } from '@contentful/rich-text-types';
+import SEO from '../components/SEO';
 
-// if Twitter follow button and/or timeline is wanting to be kept
+// if Twitter 'Follow' button and/or Timeline is wanting to be kept
 // https://www.gatsbyjs.com/plugins/gatsby-plugin-twitter/
 
-export default function Main() {
+// if Facebook 'Like' button is wanting to be kept
+// https://www.gatsbyjs.com/plugins/gatsby-source-facebook/
+
+export const data = graphql`
+    query {
+        # contentfulArticleHeader {
+        #     list
+        # }
+        contentfulRichParagraph(contentful_id: {eq: "305CEBABooWw43tpVMCKOy"}) {
+            paragraph {
+                raw
+            }
+        }
+        contentfulMotto {
+            motto
+        }
+        contentfulParagraph(contentful_id: {eq: "5SrU1MKOoxOM5dTlTTBRl1"}) {
+            paragraph {
+                paragraph
+            }
+        }
+    }
+`;
+
+export default function Main({ data }) {
+
+    // const { list } = data.contentfulArticleHeader;
+    const { paragraph: mainText } = data.contentfulRichParagraph;
+    const { motto } = data.contentfulMotto;
+    const { paragraph: guarantee } = data.contentfulParagraph.paragraph;
+
+    const options = {
+        renderNode: {
+            [BLOCKS.PARAGRAPH]: (node, children) => <Text>{children}</Text>,
+            [INLINES.HYPERLINK]: ({ data }, children) => <Contact href={data.uri}>{children}</Contact>
+        }
+    };
+
     return (
-        <StyledMain>
-            <MainContent>
-                <List>
-                    <ListItem>Extensions</ListItem>
-                    <ListItem>Property Repairs</ListItem>
-                    <ListItem>Conversions</ListItem>
-                    <ListItem>External Works</ListItem>
-                    <ListItem>Business premises maintained</ListItem>
-                </List>
-                <Carousel duration="5000"/>
-                <Text>Genuine Builders serves the North Yorkshire community.</Text>
-                <Text>We specialize in Design / Building, and we offer an exceptional and reliable service. In addition, our friendly and professional staff are here to answer any questions you may have about our company or our services.</Text>
-                <Text>Whatever type of building work you require, at Genuine Builders our goal is to provide you with a courteous, expedient, and professional service of the highest calibre.</Text>
-                <Text>If you have any questions or would like to contact us, please e-mail us at <Contact href="mailto:info@genuinebuilders.co.uk">info@genuinebuilders.co.uk</Contact> or call us at <Contact href="tel:01904-708-121">01904 708 121</Contact>.</Text>
-                <Motto>At Genuine Builders, the customer always comes first</Motto>
-                <SecondaryContent>
-                    <Reviews fade="1000" duration="5000"/>
-                    <Guarantee>We always perform to the highest standard. The testimonials above show that we always get 100% satisfaction from our customers and do our utmost to please.</Guarantee>
-                </SecondaryContent>
-                {/* <Twitter>Tweets by GenuineBuilders</Twitter> */}
-            </MainContent>
-        </StyledMain>
+        <>
+            <SEO title="Home"/>
+            <StyledMain>
+                <MainContent>
+                    <List>
+                        <ListItem>Extensions</ListItem>
+                        <ListItem>Property Repairs</ListItem>
+                        <ListItem>Conversions</ListItem>
+                        <ListItem>External Works</ListItem>
+                        <ListItem>Business premises maintained</ListItem>
+                    </List>
+                    <Carousel duration="5000"/>
+                    {mainText && renderRichText(mainText, options)}
+                    <Motto>{motto}</Motto>
+                    <SecondaryContent>
+                        <Reviews fade="1000" duration="5000"/>
+                        <Guarantee>{guarantee}</Guarantee>
+                    </SecondaryContent>
+                    {/* <Twitter>Tweets by GenuineBuilders</Twitter> */}
+                </MainContent>
+            </StyledMain>
+        </>
     )
 };
 
@@ -103,12 +144,13 @@ const SecondaryContent = styled.div`
     /* display: inline-block; */
     /* width: 40%; */
     
-    /* remove below (except media query), uncomment above 
-    for layout w/ twitter timeline */
+    /* remove all below (except media query), uncomment above 
+    for original layout/styling for use with twitter timeline */
     display: block;
     width: 90%;
     text-align: center;
     margin: 0 auto;
+
     @media only screen and (max-width: 560px) {
         width: 100%;
         padding: 0em 0.5em;

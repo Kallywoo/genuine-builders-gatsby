@@ -1,11 +1,28 @@
 // can probably just replace this all with some plug-in instead
 
-import React, { useState, useEffect } from 'react';
+import { graphql, useStaticQuery } from 'gatsby';
+import React, { useState, useEffect, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
-
-import { images } from './CarouselImages';
+// import { GatsbyImage } from 'gatsby-plugin-image';
+import { useSwipeable } from 'react-swipeable';
 
 export const Carousel = props => {
+
+    const data = useStaticQuery(graphql`
+        query {
+            contentfulImageCarousel {
+                images {
+                    id
+                    gatsbyImageData(placeholder: BLURRED)
+                    fluid {
+                        src
+                    }
+                }
+            }
+        }
+    `);
+
+    const { images } = data.contentfulImageCarousel;
 
     const [slide, setSlide] = useState(false);
     const [direction, setDirection] = useState("right");
@@ -14,10 +31,20 @@ export const Carousel = props => {
     const [lastIndex, setLastIndex] = useState(images.length - 1);
     const [index, setIndex] = useState(0);
     const [nextIndex, setNextIndex] = useState(1);
-
+    
     const [isMounted, setIsMounted] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
     const [forcing, setForcing] = useState(false);
+    const [isSwitched, setIsSwitched] = useState(false);
+
+    const newIndex = useRef(0);
+
+    const handlers = useSwipeable({
+        onSwipedLeft: () => forceSlides("right"),
+        onSwipedRight: () => forceSlides("left"),
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: false
+    });
 
     useEffect(() => {
         setIsMounted(true);
@@ -32,7 +59,7 @@ export const Carousel = props => {
         if(isMounted) {
             if(!isHovering || forcing) {
                 
-                //while carousel is idle, wait for given duration
+                // while carousel is idle, wait for given duration
                 timeout = setTimeout(() => {
                     setDuration(props.duration);
 
@@ -43,33 +70,34 @@ export const Carousel = props => {
                         setSlide(false); // stops slide
 
                         if(direction === "right") {
+                            // do these images have one after their position to jump to? if not then reset to beginning
 
-                            if(lastIndex !== images.length - 1) {
-                                setLastIndex(lastIndex + 1);
-                            } else { setLastIndex(0); };
+                            (lastIndex !== images.length - 1) ? setLastIndex(lastIndex + 1) : setLastIndex(0);
 
-                            if(index !== images.length - 1) {
-                                setIndex(index + 1);
-                            } else { setIndex(0); };
-                            
-                            if(nextIndex !== images.length - 1) {
-                                setNextIndex(nextIndex + 1);
-                            } else { setNextIndex(0); };
+                            if(!isSwitched) { // has user NOT forced the current image to a new position via index buttons?
+                                (index !== images.length - 1) ? setIndex(index + 1) : setIndex(0);
+                            } else {
+                                setIndex(newIndex.current);
+                                setIsSwitched(false);
+                            };
+
+                            (nextIndex !== images.length - 1) ? setNextIndex(nextIndex + 1) : setNextIndex(0);
 
                         } else {
+                            // do these images (going left) have one before their position to jump to? if not then reset to end
 
-                            if(lastIndex !== 0) {
-                                setLastIndex(lastIndex - 1);
-                            } else { setLastIndex(images.length - 1); };
+                            (lastIndex !== 0) ? setLastIndex(lastIndex - 1) : setLastIndex(images.length - 1);
 
-                            if(index !== 0) {
-                                setIndex(index - 1);
-                            } else { setIndex(images.length - 1); };
+                            if(!isSwitched) { // has user NOT forced the current image to a new position via index buttons?
+                                (index !== 0) ? setIndex(index - 1) : setIndex(images.length - 1);
+                            } else {
+                                setIndex(newIndex.current);
+                                setIsSwitched(false);
+                            };
 
-                            if(nextIndex !== 0) {
-                                setNextIndex(nextIndex - 1);
-                            } else { setNextIndex(images.length - 1); };
-                            
+                            (nextIndex !== 0) ? setNextIndex(nextIndex - 1) : setNextIndex(images.length - 1);
+
+                            setDirection("right"); // reset direction after being forced left
                         };
 
                     }, 1000); 
@@ -83,21 +111,7 @@ export const Carousel = props => {
         
         return () => clearTimeout(timeout);
         
-    }, [isMounted, isHovering, forcing, duration, props.duration, direction, lastIndex, index, nextIndex]);
-    
-    const resumeSlides = () => {
-        setIsHovering(false);
-
-        if(direction === "left") { // did they last click left?
-            if(forcing === true) { // if it's currently sliding, wait until over (stops abrupt direction swap mid-slide)
-                setTimeout(() => {
-                    setDirection("right");
-                }, 1100);
-            } else { // if not sliding, set right
-                setDirection("right");
-            }
-        }
-    };
+    }, [isMounted, isHovering, forcing, duration, props.duration, direction, lastIndex, index, nextIndex, images.length, isSwitched]);
 
     const forceSlides = (direction) => {
         if(slide === false) { // prevents spam of button
@@ -108,31 +122,56 @@ export const Carousel = props => {
         };
     };
 
+    const slideToIndex = (e) => {
+        if(slide === false) { // prevents awkward switch if you hit a direction button
+            // grab index from searching id in images array
+            newIndex.current = images.findIndex((image) => image.id === e.target.id);
+
+            if(index !== newIndex.current) {
+                setIsSwitched(true);
+                if(newIndex.current <= index) {
+                    setLastIndex(newIndex.current);
+                    setNextIndex(newIndex.current + 2); // on left, nextIndex is made nextIndex-1, so newIndex+1 in this case would just be equal to index, hence +2
+                    forceSlides("left");
+                } else {
+                    setNextIndex(newIndex.current);
+                    setLastIndex(newIndex.current - 2); // same as comment above, except flipped direction/equation
+                    forceSlides("right");
+                };
+            };
+        };
+    };
+
     return (
-        <CarouselContainer onMouseEnter={() => setIsHovering(true)} onMouseLeave={resumeSlides}>
+        <CarouselContainer onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
             <ImageContainer>
-                <Button onClick={() => forceSlides("left")}>‹</Button>
-                <Button onClick={() => forceSlides("right")} right>›</Button>
-                {slide && direction === "left" &&
-                    <LastImage 
-                        src={images[lastIndex].src} 
-                        alt="Genuine Builders York" 
-                        sliding={slide ? true : false}
-                    />}
-                <CurrentImage 
-                    src={images[index].src} 
-                    alt="Genuine Builders York"
-                    sliding={slide ? true : false} 
-                    direction={direction}
-                />
-                {slide && direction === "right" &&
-                    <NextImage 
-                        src={images[nextIndex].src} 
+                <SlideButton onClick={() => forceSlides("left")}>‹</SlideButton>
+                <SlideButton onClick={() => forceSlides("right")} right>›</SlideButton>
+                <div {...handlers}>
+                    {slide && direction === "left" &&
+                        <LastImage 
+                            src={images[lastIndex].fluid.src} 
+                            alt="Genuine Builders York" 
+                            sliding={slide ? true : false}
+                        />}
+                    <CurrentImage 
+                        src={images[index].fluid.src} 
                         alt="Genuine Builders York"
-                        sliding={slide ? true : false}
-                    />}
+                        sliding={slide ? true : false} 
+                        direction={direction}
+                    />
+                    {slide && direction === "right" &&
+                        <NextImage 
+                            src={images[nextIndex].fluid.src} 
+                            alt="Genuine Builders York"
+                            sliding={slide ? true : false}
+                        />}
+                </div>
                 <Indexes>
-                    {images.map((image) => <Index highlight={index + 1} active={slide ? true : false} key={image.key}/>)}
+                    {images.map((image) => 
+                        <Index highlight={index + 1} active={slide ? true : false} key={image.id}>
+                            <IndexButton id={image.id} onClick={(e) => slideToIndex(e)}></IndexButton>
+                        </Index>)}
                 </Indexes>
             </ImageContainer>
         </CarouselContainer>
@@ -150,7 +189,7 @@ const ImageContainer = styled.div`
     overflow: hidden;
 `;
 
-const Button = styled.button`
+const SlideButton = styled.button`
    position: absolute;
    top: 50%;
    ${props => props.right ? "right: 2.5%" : "left: 2.5%"};
@@ -168,9 +207,23 @@ const Button = styled.button`
    line-height: 0em;
    padding: 0;
    cursor: pointer;
+   
    &:hover {
     opacity: 90%;
    }
+
+   @media only screen and (max-width: 768px) {
+        top: auto;
+        width: 50px;
+        height: 50px;
+        bottom: 4.5%;
+        font-size: xxx-large;
+    }
+
+    @media only screen and (max-width: 560px) {
+        opacity: 0;
+        pointer-events: none;
+    }
 `;
 
 const LastImage = styled.img`
@@ -212,9 +265,9 @@ const LastSlide = keyframes`
     100% { left: 0; }
 `;
 
-const CurrentSlide = (dir) => keyframes`
+const CurrentSlide = (direction) => keyframes`
     0% { left: 0; }
-    100% { left: ${dir === "right" ? "-100%" : "100%" }; }
+    100% { left: ${direction === "right" ? "-100%" : "100%" }; }
 `;
 
 const NextSlide = keyframes`
@@ -230,18 +283,40 @@ const Indexes = styled.ol`
     top: 2.5%;
     right: 2%;
     z-index: 2;
+
+    @media only screen and (max-width: 768px) {
+        top: auto;
+        left: 0;
+        right: 0;
+        bottom: 7.5%;
+        text-align: center;
+        z-index: 1;
+    };
 `;
 
 const Index = styled.li`
-    width: 10px;
-    height: 10px;
-    background-color: white;
-    border-radius: 5px;
     display: inline-block;
     margin-right: 0.3em;
     opacity: 25%;
     
     &:nth-child(${props => props.highlight}) {
         opacity: ${props => props.active ? "25%" : "100%"};
+    };
+
+    @media only screen and (max-width: 768px) {
+        margin-right: 1.25em;
+    };
+`;
+
+const IndexButton = styled.button`
+    height: 12px;
+    background-color: white;
+    border-radius: 100%;
+    border-style: none;
+    cursor: pointer;
+
+    @media only screen and (max-width: 768px) {
+        width: 20px;
+        height: 20px;
     };
 `;

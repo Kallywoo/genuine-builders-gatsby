@@ -20,13 +20,13 @@ const GlobalStyle = createGlobalStyle`
 
   * {
     box-sizing: border-box;
-  }
+  };
 
   #gatsby-focus-wrapper {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-  }
+  };
   
   body {
     margin: 0;
@@ -38,13 +38,31 @@ const GlobalStyle = createGlobalStyle`
       border: 20px solid #2a3035;
     };
 
-  }
+  };
 
   main {
     flex: 1;
-  }
+  };
 
   p {
     color: #a0df6d;
-  }
+  };
+
+  ::-webkit-scrollbar {
+    width: 15px;
+  };
+
+  ::-webkit-scrollbar-track {
+    background: #1f2327;
+  };
+
+  ::-webkit-scrollbar-thumb {
+    background: #78b349;
+    border-left: 3px solid #1f2327;
+    border-right: 3px solid #1f2327;
+  };
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4c781d;
+  };
 `;

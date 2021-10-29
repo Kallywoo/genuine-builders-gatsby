@@ -1,22 +1,21 @@
+import { graphql, useStaticQuery } from 'gatsby';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 export const Reviews = ({fade, duration}) => {
     
-    const reviews = [
-        {
-            quote: "Brilliant job in the loft - completed on time and to the usual excellent standard.",
-            cite: "Steve & Lucy",
-        },
-        {
-            quote: "Both you and the people that worked with you were considerate and very professional.",
-            cite: "Mr & Mrs M, Acomb, York",
-        },
-        {
-            quote: "Fantastic job. We were both really impressed and very happy with the result.",
-            cite: "Laura",
+    const data = useStaticQuery(graphql`
+        query {
+            allContentfulTestimonial {
+                reviews: nodes {
+                    quote
+                    cite: author
+                }
+            }
         }
-    ];
+    `);
+
+    const { reviews } = data.allContentfulTestimonial;
 
     const [fadeOut, setFadeOut] = useState(false);
     const [index, setIndex] = useState(0);
@@ -77,6 +76,22 @@ const Blockquote = styled.blockquote`
     margin: 0;
     color: #a0df6d;
     font-weight: bold;
+
+    /* remove all of below for original styling */
+    font-size: 1.25em;
+    margin: 0 auto;
+    padding: 0.1em;
+    padding-bottom: 1em;
+    width: 85%;
+
+    cite {
+        font-size: 0.9em;
+        font-weight: normal;
+    }
+
+    @media only screen and (max-width: 560px) {
+        width: 100%;
+    }
 `;
 
 const Cite = styled.cite`

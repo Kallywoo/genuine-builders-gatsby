@@ -1,16 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
+import { GatsbyImage } from 'gatsby-plugin-image';
 
 import screw from '../images/temp/screwBulletSmall.png';
 import prev from '../images/temp/lightbox-btn-prev.gif';
 import next from '../images/temp/lightbox-btn-next.gif';
 import close from '../images/temp/lightbox-btn-close.gif';
 
-import { GalleryImages as images, masterArray } from '../components/GalleryImages';
+import { GalleryQuery, CreateMasterArray } from '../components/GalleryImages';
 
 import { Portal } from '../components/Modal';
+import SEO from '../components/SEO';
 
 export default function Gallery() {
+
+    const images = GalleryQuery();
+    const masterArray = CreateMasterArray();
 
     const [active, setActive] = useState(false);
     const [id, setId] = useState(0);
@@ -25,11 +30,9 @@ export default function Gallery() {
     const ShowComparisons = (e) => { // opens comparisons box
         setActive(true);
         if(e.target.id && e.target.id !== id) { // does the clicked container have an ID and is it a different one to previous click?
-            setId(e.target.id); // grabs the id for render to know which index is the object that contains the specific before/afters
-            console.log(id);
-
+            setId(images.findIndex((element) => element.id === e.target.id)); // finds the project with same id as clicked for render to know which index is the object that contains the specific before/afters
         } else if(!e.target.id) { // if there is no id
-            console.error("no id on this image!");
+            console.error("no id found for this image!");
         };
     };
 
@@ -46,91 +49,87 @@ export default function Gallery() {
     };
 
     const CycleImage = (direction) => {
-
         if(direction === "left") {
-            if(arrayIndex === 0) {
-                setArrayIndex(masterArray.length - 1);
-            } else {
-                setArrayIndex(arrayIndex - 1);
-            };
+            (arrayIndex === 0) ? setArrayIndex(masterArray.length - 1) : setArrayIndex(arrayIndex - 1);
         } else {
-            if(arrayIndex === masterArray.length - 1) {
-                setArrayIndex(0);
-            } else {
-                setArrayIndex(arrayIndex + 1);
-            };
+            (arrayIndex === masterArray.length - 1) ? setArrayIndex(0) : setArrayIndex(arrayIndex + 1);
         };
     };
 
     return (
-        <StyledMain>
-            <MainContent>
-                <List>
-                    <ListItem>Extensions</ListItem>
-                    <ListItem>Property Repairs</ListItem>
-                    <ListItem>Conversions</ListItem>
-                    <ListItem>External Works</ListItem>
-                    <ListItem>Business premises maintained</ListItem>
-                </List>
-                {active &&
-                    <Comparisons ref={containerRef} tabIndex={-1}>
-                        <ComparisonContainer>
-                            <Span>Before</Span>
-                            {images[id].before.map(image =>
-                                <OpenModalButton id={image.id} key={image.id} onClick={ToggleModal}>
-                                    <ComparisonImage 
-                                        src={image.thumb}
-                                        alt="Genuine Builders York"
-                                    />
-                                </OpenModalButton>
-                            )}
-                        </ComparisonContainer>
-                        <ComparisonContainer>
-                            <Span>After</Span>
-                            {images[id].after.map(image =>
-                                <OpenModalButton id={image.id} key={image.id} onClick={ToggleModal}>
-                                    <ComparisonImage 
-                                        src={image.thumb}
-                                        alt="Genuine Builders York"
-                                    />
-                                </OpenModalButton>
-                            )}
-                        </ComparisonContainer>
-                    </Comparisons>
-                }
-                <Grid>
-                    {images.map(image => 
-                        <Button 
-                            onClick={ShowComparisons} 
-                            id={image.id ? image.id : ""}
-                            key={image.id ? image.id : ""}
-                        >
-                            <Image src={image.thumb} alt="Genuine Builders York"/>
-                        </Button>
-                    )}
-                </Grid>
-                {showModal && 
-                    <Portal>
-                        <ModalOverlay>
-                            <ModalDiv>
-                                <ModalImage>
-                                    <Image src={masterArray[arrayIndex].src} alt=""/>
+        <>
+            <SEO title="Gallery"/>
+            <StyledMain>
+                <MainContent>
+                    <List>
+                        <ListItem>Extensions</ListItem>
+                        <ListItem>Property Repairs</ListItem>
+                        <ListItem>Conversions</ListItem>
+                        <ListItem>External Works</ListItem>
+                        <ListItem>Business premises maintained</ListItem>
+                    </List>
+                    {active &&
+                        <Comparisons ref={containerRef} tabIndex={-1}>
+                            <ComparisonContainer>
+                                <Span>Before</Span>
+                                {images[id]?.before.map(image =>
+                                    <OpenModalButton id={image.id} key={image.id} onClick={ToggleModal}>
+                                        <ComparisonImage 
+                                            image={image.thumb}
+                                            alt="Genuine Builders York"
+                                        />
+                                    </OpenModalButton>
+                                )}
+                            </ComparisonContainer>
+                            <ComparisonContainer>
+                                <Span>After</Span>
+                                {images[id]?.after.map(image =>
+                                    <OpenModalButton id={image.id} key={image.id} onClick={ToggleModal}>
+                                        <ComparisonImage 
+                                            image={image.thumb}
+                                            alt="Genuine Builders York"
+                                        />
+                                    </OpenModalButton>
+                                )}
+                            </ComparisonContainer>
+                        </Comparisons>
+                    }
+                    <Grid>
+                        {images.map(image => 
+                            <Button 
+                                onClick={ShowComparisons} 
+                                id={image.id ? image.id : ""}
+                                key={image.id ? image.id : ""}
+                            >
+                                <GatsbyImg image={image.after[0].thumb} alt="Genuine Builders York"/>
+                            </Button>
+                        )}
+                    </Grid>
+                    {showModal && 
+                        <Portal>
+                            <ModalOverlay>
+                                <ModalDiv>
+                                    <ModalImage>
+                                        {console.log(masterArray[arrayIndex])}
+                                        {console.log(masterArray[arrayIndex].main)}
+                                        <GatsbyImg image={masterArray[arrayIndex].main} alt=""/>
 
-                                    <ModalButton left onClick={() => CycleImage("left")}><img src={prev} alt="left"/></ModalButton>
-                                    <ModalButton right onClick={() => CycleImage("right")}><img src={next} alt="right"/></ModalButton>
-                                </ModalImage>
-                                <ModalInfo>
-                                    <span>Image {arrayIndex + 1} of {masterArray.length}</span>
-                                    <ModalClose onClick={ToggleModal}>
-                                        <Image src={close} alt="Genuine Builders York"/>
-                                    </ModalClose>
-                                </ModalInfo>
-                            </ModalDiv>
-                        </ModalOverlay>
-                    </Portal>
-                }
-            </MainContent>
-        </StyledMain>
+                                        <ModalButton left onClick={() => CycleImage("left")}><img src={prev} alt="left"/></ModalButton>
+                                        <ModalButton right onClick={() => CycleImage("right")}><img src={next} alt="right"/></ModalButton>
+                                    </ModalImage>
+                                    <ModalInfo>
+                                        <span>Image {arrayIndex + 1} of {masterArray.length}</span>
+                                        <ModalClose onClick={ToggleModal}>
+                                            <Image src={close} alt="Genuine Builders York"/>
+                                        </ModalClose>
+                                    </ModalInfo>
+                                </ModalDiv>
+                            </ModalOverlay>
+                        </Portal>
+                    }
+                </MainContent>
+            </StyledMain>
+        </>
     );
 };
 
@@ -205,6 +204,12 @@ const Image = styled.img`
     pointer-events: none;
 `;
 
+const GatsbyImg = styled(GatsbyImage)`
+    vertical-align: middle;
+    width: 100%;
+    pointer-events: none;
+`;
+
 const Comparisons = styled.div`
     display: flex;
     justify-content: space-around;
@@ -231,7 +236,7 @@ const OpenModalButton = styled(Button)`
     padding: 0em;
 `;
 
-const ComparisonImage = styled(Image)`
+const ComparisonImage = styled(GatsbyImg)`
     margin: 0.5em 0em;
     pointer-events: none;
 `;

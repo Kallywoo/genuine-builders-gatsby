@@ -1,32 +1,61 @@
 import React from 'react';
 import styled from 'styled-components';
+import { graphql } from 'gatsby';
 
 import { ContactForm } from '../components/ContactForm';
 import screw from '../images/temp/screwBulletSmall.png';
+import SEO from '../components/SEO';
 
-export default function Contact() {
+export const data = graphql`
+    query {
+        allContentfulContact {
+            contacts: nodes {
+                id
+                name
+                number
+                email
+                listOrder
+            }
+        }
+    }
+`;
+
+export default function Contact({ data }) {
+
+    const { contacts } = data.allContentfulContact;
+    contacts.sort((a, b) => a.listOrder - b.listOrder);
+
     return (
-        <StyledMain>
-            <MainContent>
-                <List>
-                    <ListItem>Extensions</ListItem>
-                    <ListItem>Property Repairs</ListItem>
-                    <ListItem>Conversions</ListItem>
-                    <ListItem>External Works</ListItem>
-                    <ListItem>Business premises maintained</ListItem>
-                </List>
-                <FlexBox>
-                    <ContactInfo>
-                        <Name>Office</Name>
-                        <Number href="tel:01904-708-121">01904 708 121</Number>
-                        <Name>Mat Lynch</Name>
-                        <Number href="tel:07769-708-388">07769 708 388</Number>
-                        <Email href="mailto:mat@genuinebuilders.co.uk">mat@genuinebuilders.co.uk</Email>
-                    </ContactInfo>
-                    <ContactForm/>
-                </FlexBox>
-            </MainContent>
-        </StyledMain>
+        <>
+            <SEO title="Contact Us"/>
+            <StyledMain>
+                <MainContent>
+                    <List>
+                        <ListItem>Extensions</ListItem>
+                        <ListItem>Property Repairs</ListItem>
+                        <ListItem>Conversions</ListItem>
+                        <ListItem>External Works</ListItem>
+                        <ListItem>Business premises maintained</ListItem>
+                    </List>
+                    <FlexBox>
+                        <ContactInfo>
+                            {contacts.map(contact => (
+                                <React.Fragment key={contact.id}>
+                                    <Name>{contact.name}</Name>
+                                    <Number href={`tel:${contact.number}`}>{contact.number}</Number>
+                                </React.Fragment>
+                            ))}
+                            <Emails>
+                                {contacts.map(contact => 
+                                    <Email href={`mailto:${contact.email}`} key={`email-${contact.id}`}>{contact.email}</Email>
+                                )}
+                            </Emails>
+                        </ContactInfo>
+                        <ContactForm/>
+                    </FlexBox>
+                </MainContent>
+            </StyledMain>
+        </>
     );
 };
 
@@ -111,8 +140,11 @@ const Email = styled.a`
     display: block;
     text-decoration: none;
     color: white;
+`;
+
+const Emails = styled.div`
     margin-top: 4em;
     @media only screen and (max-width: 768px) {
         margin-top: 1em;
     }
-`;
+`

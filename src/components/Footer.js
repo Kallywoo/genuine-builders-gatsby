@@ -1,12 +1,31 @@
 import React from 'react';
-import { Link } from 'gatsby';
+import { Link, useStaticQuery, graphql } from 'gatsby';
 import styled from 'styled-components';
+
 import background from '../images/temp/headerBackground.png';
 import logo from '../images/temp/logo.png';
 import square from '../images/temp/square.png';
 import federation from '../images/temp/federation.svg';
 
 export const Footer = () => {
+
+    const data = useStaticQuery(graphql`
+        query { 
+            allContentfulContact {
+                contacts: nodes {
+                    id
+                    name
+                    number
+                    email
+                    listOrder
+                }
+            }
+        }
+    `);
+
+    const { contacts } = data.allContentfulContact;
+    contacts.sort((a, b) => a.listOrder - b.listOrder);
+
     return (
         <StyledFooter>
             <LeftSideContent>
@@ -25,13 +44,15 @@ export const Footer = () => {
             <RightSideContent>
                 <ContactContainer>
                     <Square src={square} alt=""/>
-                        <Grid>
-                            <Name>Mat Lynch</Name>
-                            <Number href="tel:07769-708-388">07769 708 388</Number>
-                            <Email href="email:mat@genuinebuilders.co.uk">mat@genuinebuilders.co.uk</Email>
-                            <Name>Office</Name>
-                            <Number href="tel:01904-708-121">01904 708 121</Number>
-                        </Grid>
+                    <Grid>
+                        {contacts.slice(0, 2).map(contact => 
+                            <React.Fragment key={contact.id}>
+                                <Name>{contact.name}</Name>
+                                <Number href={`tel:${contact.number}`}>{contact.number}</Number>
+                                <Email href={`email:${contact.email}`}>{contact.email}</Email>
+                            </React.Fragment>
+                        )}
+                    </Grid>
                     <Square src={square} alt=""/>
                 </ContactContainer>
                 <CompanyInfo>

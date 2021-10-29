@@ -1,11 +1,9 @@
 import React from 'react';
-import { Link } from 'gatsby';
+import { graphql, Link, useStaticQuery } from 'gatsby';
 import styled from 'styled-components';
 
 import background from '../images/temp/headerBackground.png';
-import logo from '../images/temp/logo.png';
 import square from '../images/temp/square.png';
-import contactTab from '../images/temp/contactTab.png';
 
 import { Navigation } from './Navigation';
 import { MobileNavigation } from './MobileNavigation';
@@ -13,23 +11,60 @@ import { MobileNavigation } from './MobileNavigation';
 export const Header = ({ props }) => {
 
     const { pathname } = props; // pulled from Layout.js
+
+    const data = useStaticQuery(graphql`
+        query {
+            contentfulHeader {
+                logo {
+                    fluid {
+                        src
+                    }
+                }
+                description
+                contactImage {
+                    fluid {
+                        src
+                    }
+                }
+            }
+            allContentfulContact {
+                contacts: nodes {
+                    id
+                    name
+                    number
+                    email
+                    listOrder
+                }
+            }
+        }
+    `);
     
+    const { logo, description, contactImage } = data.contentfulHeader;
+    const { contacts } = data.allContentfulContact;
+
+    contacts.sort((a, b) => a.listOrder - b.listOrder);
+
+    const logoImage = logo.fluid.src;
+    const contactTab = contactImage.fluid.src;
+
     return (
         <StyledHeader>
             <MainHeader>
                 <MobileNavigation/>
                 <FlexBox>
-                    <LogoLink to="/"><Logo src={logo} alt="Genuine Builders Limited"/></LogoLink>
+                    <LogoLink to="/"><Logo src={logoImage} alt="Genuine Builders Limited"/></LogoLink>
                     <ContactContainer>
-                        <ContactHeader>For all your building requirements</ContactHeader>
+                        <ContactHeader>{description}</ContactHeader>
                         <InnerFlexBox>
                             <Square src={square} alt=""/>
                             <Grid>
-                                <Name>Mat <NameSpan>Lynch</NameSpan></Name>
-                                <Number href="tel:07769-708-388">07769 708 388</Number>
-                                <Email href="email:mat@genuinebuilders.co.uk">mat@genuinebuilders.co.uk</Email>
-                                <Name>Office</Name>
-                                <Number href="tel:01904-708-121">01904 708 121</Number>
+                                {contacts.slice(0, 2).map(contact => 
+                                    <React.Fragment key={contact.id}>
+                                        <Name>{contact.name}</Name>
+                                        <Number href={`tel:${contact.number}`}>{contact.number}</Number>
+                                        <Email href={`email:${contact.email}`}>{contact.email}</Email>
+                                    </React.Fragment>
+                                )}
                             </Grid>
                             <Square src={square} alt=""/>
                         </InnerFlexBox>
