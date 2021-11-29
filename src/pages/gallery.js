@@ -110,10 +110,7 @@ export default function Gallery() {
                             <ModalOverlay>
                                 <ModalDiv>
                                     <ModalImage>
-                                        {console.log(masterArray[arrayIndex])}
-                                        {console.log(masterArray[arrayIndex].main)}
                                         <GatsbyImg image={masterArray[arrayIndex].main} alt=""/>
-
                                         <ModalButton left onClick={() => CycleImage("left")}><img src={prev} alt="left"/></ModalButton>
                                         <ModalButton right onClick={() => CycleImage("right")}><img src={next} alt="right"/></ModalButton>
                                     </ModalImage>
