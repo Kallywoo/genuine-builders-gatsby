@@ -205,7 +205,8 @@ const SlideButton = styled.button`
    width: 40px;
    height: 40px;
    line-height: 0em;
-   padding: 0;
+   padding-bottom: 5px;
+   ${props => props.right ? "padding-right: 4px" : "padding-left: 3px"};
    cursor: pointer;
    
    &:hover {

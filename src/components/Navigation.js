@@ -9,10 +9,10 @@ export const Navigation = () => {
     return (
         <StyledNavigation>
             <List>
-                <ListItem><StyledLink to="/">Home</StyledLink></ListItem>
-                <ListItem><StyledLink to="/about">About Us</StyledLink></ListItem>
-                <ListItem><StyledLink to="/gallery">Gallery</StyledLink></ListItem>
-                <ListItem><StyledLink to="/contact">Contact</StyledLink></ListItem>
+                <ListItem><StyledLink to="/" activeClassName="active">Home</StyledLink></ListItem>
+                <ListItem><StyledLink to="/about" activeClassName="active">About Us</StyledLink></ListItem>
+                <ListItem><StyledLink to="/gallery" activeClassName="active">Gallery</StyledLink></ListItem>
+                <ListItem><StyledLink to="/contact" activeClassName="active">Contact</StyledLink></ListItem>
             </List>
         </StyledNavigation>
     );
@@ -46,9 +46,7 @@ const ListItem = styled.li`
     box-shadow: 3px 3px 3px #333333;
 `;
 
-const StyledLink = styled(Link).attrs(props => ({
-    test: props['aria-current'],
-}))`
+const StyledLink = styled(Link)`
     background-image: url(${navBackground});
     background-size: 100% 100%;
     color: #a8dc7e;
@@ -56,12 +54,7 @@ const StyledLink = styled(Link).attrs(props => ({
     min-width: 7em;
     padding: 0.8ex 1ex;
     
-    &:hover {
+    &.active, &:hover {
         background-image: url(${navBackgroundActive});
     };
-    &[aria-current=${`page`}] {
-        background-image: url(${navBackgroundActive});
-    };
-    /* ^^ maybe come up with a different way - there is no aria-current attribute
-    when visiting the page directly instead of from the homepage, so it errors */
 `;
