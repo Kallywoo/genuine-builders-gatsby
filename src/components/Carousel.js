@@ -170,7 +170,7 @@ export const Carousel = props => {
                 <Indexes>
                     {images.map((image) => 
                         <Index highlight={index + 1} active={slide ? true : false} key={image.id}>
-                            <IndexButton id={image.id} onClick={(e) => slideToIndex(e)}></IndexButton>
+                            <IndexButton id={image.id} onClick={(e) => slideToIndex(e)} aria-label={`Skip to Image ${index + 1}`}></IndexButton>
                         </Index>)}
                 </Indexes>
             </ImageContainer>
