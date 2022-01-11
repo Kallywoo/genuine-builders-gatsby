@@ -3,7 +3,7 @@
 import { graphql, useStaticQuery } from 'gatsby';
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
-// import { GatsbyImage } from 'gatsby-plugin-image';
+import { GatsbyImage } from 'gatsby-plugin-image';
 import { useSwipeable } from 'react-swipeable';
 
 export const Carousel = props => {
@@ -14,9 +14,6 @@ export const Carousel = props => {
                 images {
                     id
                     gatsbyImageData(placeholder: BLURRED)
-                    fluid {
-                        src
-                    }
                 }
             }
         }
@@ -149,23 +146,27 @@ export const Carousel = props => {
                 <SlideButton onClick={() => forceSlides("right")} right>›</SlideButton>
                 <div {...handlers}>
                     {slide && direction === "left" &&
-                        <LastImage 
-                            src={images[lastIndex].fluid.src} 
+                        <LastImage sliding={slide ? true : false}> 
+                            <GatsbyImage
+                            image={images[lastIndex].gatsbyImageData} 
                             alt="Genuine Builders York" 
-                            sliding={slide ? true : false}
-                        />}
-                    <CurrentImage 
-                        src={images[index].fluid.src} 
+                            />
+                        </LastImage>
+                    }
+                    <CurrentImage sliding={slide ? true : false} direction={direction}> 
+                        <GatsbyImage
+                        image={images[index].gatsbyImageData} 
                         alt="Genuine Builders York"
-                        sliding={slide ? true : false} 
-                        direction={direction}
-                    />
+                        />
+                    </CurrentImage>
                     {slide && direction === "right" &&
-                        <NextImage 
-                            src={images[nextIndex].fluid.src} 
+                        <NextImage sliding={slide ? true : false}>
+                            <GatsbyImage
+                            image={images[nextIndex].gatsbyImageData} 
                             alt="Genuine Builders York"
-                            sliding={slide ? true : false}
-                        />}
+                            />
+                        </NextImage>
+                    }
                 </div>
                 <Indexes>
                     {images.map((image) => 
@@ -227,7 +228,7 @@ const SlideButton = styled.button`
     }
 `;
 
-const LastImage = styled.img`
+const LastImage = styled.div`
     position: absolute;
     width: 100%;
     top: 0;
@@ -238,7 +239,7 @@ const LastImage = styled.img`
     animation-timing-function: ease-out;
 `;
 
-const CurrentImage = styled.img`
+const CurrentImage = styled.div`
     display: block;
     height: auto;
     max-width: 100%;
@@ -249,7 +250,7 @@ const CurrentImage = styled.img`
     animation-timing-function: ease-out;
 `;
 
-const NextImage = styled.img`
+const NextImage = styled.div`
     position: absolute;
     width: 100%;
     top: 0;
@@ -306,6 +307,10 @@ const Index = styled.li`
 
     @media only screen and (max-width: 768px) {
         margin-right: 1.25em;
+
+        &:last-child {
+            margin-right: 0;
+        };
     };
 `;
 
