@@ -2,16 +2,21 @@ import React, { useState } from 'react';
 import { Link } from 'gatsby';
 import styled from 'styled-components';
 
-import navButton from '../images/temp/mobileNavButton.png';
+import iconOpen from '../images/temp/mobileNavButton.png';
+import iconClose from '../images/temp/mobileNavClose.png';
 
 export const MobileNavigation = () => {
 
-    const [isNavOpen, setIsNavOpen] = useState(false);
+    const [open, setOpen] = useState(false);
 
     return (
-        <MobileHeader>
-            <Button onClick={() => setIsNavOpen(!isNavOpen)}><Hamburger src={navButton} alt=""/></Button>
-            {isNavOpen &&
+        <>
+            <Backdrop visible={open} onClick={() => setOpen(!open)}/>
+            <MobileHeader>
+                <Button onClick={() => setOpen(!open)}>
+                    <Hamburger src={open ? iconClose : iconOpen} alt=""/>
+                </Button>
+            {open &&
                 <nav>
                     <List>
                         <ListItem><StyledLink to="/">Home</StyledLink></ListItem>
@@ -21,7 +26,8 @@ export const MobileNavigation = () => {
                     </List>
                 </nav>
             }
-        </MobileHeader>
+            </MobileHeader>
+        </>
     );
 };
 
@@ -38,7 +44,7 @@ const MobileHeader = styled.div`
         left: 0;
         box-shadow: 0 1px 5px #1c1c1c;
     }
-`;
+        `;
 
 const Button = styled.button`
     padding: 0;
@@ -60,16 +66,28 @@ const Hamburger = styled.img`
 const List = styled.ul`
     list-style-type: none;
     padding-left: 1em;
+    margin-top: 0.5em;
+    margin-bottom: 0.25em;
 `;
 
 const ListItem = styled.li`
-    margin-top: 1em;
+    line-height: 3.125em;
 `;
 
 const StyledLink = styled(Link)`
     color: white;
     text-decoration: none;
-    font-size: 2em;
+    font-size: 1.75em;
     font-weight: bold;
     text-shadow: 1px 1px grey;
+`;
+
+const Backdrop = styled.div`
+    display: ${props => props.visible ? "block" : "none"};
+    position: fixed;
+    background-color: rgba(0,0,0,0.5);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
 `;

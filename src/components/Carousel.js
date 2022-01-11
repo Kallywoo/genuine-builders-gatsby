@@ -306,6 +306,10 @@ const Index = styled.li`
 
     @media only screen and (max-width: 768px) {
         margin-right: 1.25em;
+
+        &:last-child {
+            margin-right: 0;
+        };
     };
 `;
 
