@@ -1,7 +1,7 @@
 name: deploy-app-on-s3
 on:
   pull_request:
-    branches: [additions]
+    branches: [main]
     types: [closed]
 jobs:
   deploy:
