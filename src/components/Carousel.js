@@ -157,6 +157,7 @@ export const Carousel = props => {
                         <GatsbyImage
                         image={images[index].gatsbyImageData} 
                         alt="Genuine Builders York"
+                        loading="eager"
                         />
                     </CurrentImage>
                     {slide && direction === "right" &&
@@ -315,6 +316,7 @@ const Index = styled.li`
 `;
 
 const IndexButton = styled.button`
+    width 12px;
     height: 12px;
     background-color: white;
     border-radius: 100%;
