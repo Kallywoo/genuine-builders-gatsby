@@ -316,7 +316,7 @@ const Index = styled.li`
 `;
 
 const IndexButton = styled.button`
-    width 12px;
+    width: 12px;
     height: 12px;
     background-color: white;
     border-radius: 100%;
