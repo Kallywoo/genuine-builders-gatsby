@@ -1,20 +1,52 @@
 import React from 'react';
 import { Footer } from './Footer';
 import { Header } from './Header';
-import { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 
 import background from '../images/temp/brickBackground.png';
 
 export const Layout = ({ children, location }) => {
-    return (
-        <>
-            <GlobalStyle/>
-            <Header props={location}/>
-            {children}
-            <Footer/>
-        </>
-    )
+  return (
+    <>
+      <GlobalStyle/>
+      <SkipLink href="#skip">Skip to main content</SkipLink>
+      <Header props={location}/>
+      <SkipContent id="skip" tabIndex="-1">Main Content</SkipContent>
+      {children}
+      <Footer/>
+    </>
+  );
 };
+
+const SkipLink = styled.a`
+  position: absolute;
+  top: -1000%;
+
+  &:focus {
+    top: 0;
+    left: 33%;
+    right: 33%;
+    background-color: #65717a;
+    color: #a0df6d;
+    padding: 0.5em 2em;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 3px 3px 3px #333333;
+    border-radius: 3px;
+    z-index: 4;
+
+    @media only screen and (max-width: 560px) {
+      background-color: #1f2327;
+      color: white;
+      box-shadow: none;
+    };
+  };
+`;
+
+const SkipContent = styled.h2`
+  position: absolute;
+  top: -1000%;
+`;
 
 const GlobalStyle = createGlobalStyle`
 

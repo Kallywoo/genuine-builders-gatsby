@@ -30,7 +30,7 @@ export default function Contact({ data }) {
             <SEO title="Contact Us"/>
             <StyledMain>
                 <MainContent>
-                    <List>
+                    <List aria-hidden="true">
                         <ListItem>Extensions</ListItem>
                         <ListItem>Property Repairs</ListItem>
                         <ListItem>Conversions</ListItem>

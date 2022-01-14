@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import loadingIcon from '../images/temp/loading.gif';
+
 export const ContactForm = () => {
 
     // https://dev.to/deboragaleano/how-to-handle-multiple-inputs-in-react-55el
+
+    const [error, setError] = useState();
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState('');
 
     const initialValues = {
         name: "",
         email: "",
         phone: "",
         message: "",
+        boop: ''
     };
 
     const [values, setValues] = useState(initialValues);
@@ -23,13 +30,37 @@ export const ContactForm = () => {
         });
     };
 
-    const handleSubmit = e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError(null);
 
-        // could do with a check for whether one or both entries for email/phone has been entered
-        // instead of making both required?
+        const body = {
+            ...values,
+            recipient: `${process.env.SES_RECIPIENT}`
+        };
 
-        // actions for submitting stuff
+        console.log(body);
+
+        const res = await fetch(`${process.env.API_ENDPOINT}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+
+        const text = JSON.parse(await res.text());
+
+        if(res.status >= 400 && res.status < 600) {
+            setLoading(false);
+            setError(text.message);
+        } else {
+            // it worked!
+            setLoading(false);
+            setMessage('Email successfully sent!');
+            handleReset();
+        };
     };
 
     const handleReset = () => {
@@ -39,54 +70,65 @@ export const ContactForm = () => {
     return (
         <StyledForm onSubmit={handleSubmit}>
             <ContactUs>Contact us</ContactUs>
-            <Fieldset>
-                <Label htmlFor="name">
+            <Fieldset disabled={loading}>
+                <Label>
                     Name:
                     <Input 
                         name="name" 
                         type="text"
-                        id="name"
                         value={values.name}
                         onChange={handleInputChange}
                         required
                     />
                 </Label>
-                <Label htmlFor="email">
+                <Label>
                     E-mail address:
                     <Input 
                         name="email"
                         type="email"
-                        id="email"
                         value={values.email}
                         onChange={handleInputChange}
                         required
                     />
                 </Label>
-                <Label htmlFor="phone">
+                <Label>
                     Contact number:
                     <Input 
                         name="phone" 
                         type="tel"
-                        id="phone"
                         value={values.phone}
                         onChange={handleInputChange}
                         pattern="^\s*\(?(020[7,8]{1}\)?[ ]?[1-9]{1}[0-9{2}[ ]?[0-9]{4})|(0[1-8]{1}[0-9]{3}\)?[ ]?[1-9]{1}[0-9]{2}[ ]?[0-9]{3})\s*$"
-                        required
+                        // required
                     />
                 </Label>
-                <Label htmlFor="message">
+                <Label>
                     Message:
                     <TextArea 
                         name="message" 
                         type="text"
-                        id="message"
                         value={values.message}
                         onChange={handleInputChange}
                         required
                     />
+                    <Input 
+                        name="boop"
+                        type="boop"
+                        value={values.boop}
+                        onChange={handleInputChange}
+                        className="boop"
+                    />
                 </Label>
-                <Button type="reset" onClick={handleReset}>Reset</Button>
-                <Button type="submit">Submit</Button>
+                <Button type="reset" onClick={handleReset} disabled={loading}>Reset</Button>
+                <Button type="submit" disabled={loading}>
+                    {loading ? <img src={loadingIcon} alt="Submitting"/> : 'Submit'}
+                </Button>
+                <div aria-live="polite" role="status">
+                    {message ? <p>{message}</p> : ''}
+                </div>
+                <div aria-live="assertive">
+                    {error ? <p>Error: {error}</p> : ''}
+                </div>
             </Fieldset>
         </StyledForm>
     );
@@ -139,17 +181,23 @@ const Input = styled.input`
     color: #555555;
     box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
     transition: border linear 0.2s, box-shadow linear 0.2s;
+
     &:focus {
         outline: none;
         border-color: rgba(82, 168, 236, 0.8);
         box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%), 0 0 8px rgb(82 168 236 / 60%);
-    }
+    };
+
+    &.boop {
+        display: none;
+    };
+
     @media only screen and (max-width: 768px) {
         display: block;
         width: 100%;
         margin-left: 0;
         margin-top: 0.5em;
-    }
+    };
 `;
 
 const TextArea = styled.textarea`
@@ -184,8 +232,20 @@ const Button = styled.button`
     color: #8cde97;
     padding: 0.4em 1.3em;
     margin-left: 2em;
+    vertical-align: middle;
+
+    img {
+        display: block;
+    }
+
     &:hover {
         background: gray;
         color: black;
-    }
+    };
+
+    &:disabled {
+        ${props => props.type === 'submit' ? 'padding: 0.36em 1.7em' : ''};
+        border-color: #517d5b;
+        color: #517d5b;
+    };
 `;

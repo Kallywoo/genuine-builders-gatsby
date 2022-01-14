@@ -142,8 +142,8 @@ export const Carousel = props => {
     return (
         <CarouselContainer onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
             <ImageContainer>
-                <SlideButton onClick={() => forceSlides("left")}>‹</SlideButton>
-                <SlideButton onClick={() => forceSlides("right")} right>›</SlideButton>
+                <SlideButton onClick={() => forceSlides("left")} aria-label="Previous Image">‹</SlideButton>
+                <SlideButton onClick={() => forceSlides("right")} right aria-label="Next Image">›</SlideButton>
                 <div {...handlers}>
                     {slide && direction === "left" &&
                         <LastImage sliding={slide ? true : false}> 
@@ -170,9 +170,9 @@ export const Carousel = props => {
                     }
                 </div>
                 <Indexes>
-                    {images.map((image) => 
+                    {images.map((image, i) => 
                         <Index highlight={index + 1} active={slide ? true : false} key={image.id}>
-                            <IndexButton id={image.id} onClick={(e) => slideToIndex(e)} aria-label={`Skip to Image ${index + 1}`}></IndexButton>
+                            <IndexButton id={image.id} onClick={(e) => slideToIndex(e)} aria-label={i + 1 === index + 1 ? `Current Image` : `Skip to Image ${i + 1}`}></IndexButton>
                         </Index>)}
                 </Indexes>
             </ImageContainer>
@@ -316,7 +316,7 @@ const Index = styled.li`
 `;
 
 const IndexButton = styled.button`
-    width 12px;
+    width: 12px;
     height: 12px;
     background-color: white;
     border-radius: 100%;

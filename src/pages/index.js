@@ -55,7 +55,7 @@ export default function Main({ data }) {
             <SEO title="Home"/>
             <StyledMain>
                 <MainContent>
-                    <List>
+                    <List aria-hidden="true">
                         <ListItem>Extensions</ListItem>
                         <ListItem>Property Repairs</ListItem>
                         <ListItem>Conversions</ListItem>

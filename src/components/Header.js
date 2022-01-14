@@ -3,10 +3,10 @@ import { graphql, Link, useStaticQuery } from 'gatsby';
 import styled from 'styled-components';
 
 import background from '../images/temp/headerBackground.png';
-import square from '../images/temp/square.png';
 
 import { Navigation } from './Navigation';
 import { MobileNavigation } from './MobileNavigation';
+import { ContactInformation } from './ContactInformation';
 
 export const Header = ({ props }) => {
 
@@ -27,22 +27,10 @@ export const Header = ({ props }) => {
                     }
                 }
             }
-            allContentfulContact {
-                contacts: nodes {
-                    id
-                    name
-                    number
-                    email
-                    listOrder
-                }
-            }
         }
     `);
     
     const { logo, description, contactImage } = data.contentfulHeader;
-    const { contacts } = data.allContentfulContact;
-
-    contacts.sort((a, b) => a.listOrder - b.listOrder);
 
     const logoImage = logo.fluid.src;
     const contactTab = contactImage.fluid.src;
@@ -52,21 +40,13 @@ export const Header = ({ props }) => {
             <MainHeader>
                 <MobileNavigation/>
                 <FlexBox>
-                    <LogoLink to="/"><Logo src={logoImage} alt="Genuine Builders Limited"/></LogoLink>
+                    <ImageHeader>
+                        <Link to="/"><Logo src={logoImage} alt="Genuine Builders Limited"/></Link>
+                    </ImageHeader>
                     <ContactContainer>
                         <ContactHeader>{description}</ContactHeader>
                         <InnerFlexBox>
-                            <Square src={square} alt=""/>
-                            <Grid>
-                                {contacts.slice(0, 2).map(contact => 
-                                    <React.Fragment key={contact.id}>
-                                        <Name>{contact.name}</Name>
-                                        <Number href={`tel:${contact.number}`}>{contact.number}</Number>
-                                        <Email href={`email:${contact.email}`}>{contact.email}</Email>
-                                    </React.Fragment>
-                                )}
-                            </Grid>
-                            <Square src={square} alt=""/>
+                            <ContactInformation/>
                         </InnerFlexBox>
                     </ContactContainer>
                 </FlexBox>
@@ -74,7 +54,7 @@ export const Header = ({ props }) => {
             <Navigation/>
             <ContactUs visible={pathname !== "/contact" ? true : false}>
                 <Link to="/contact">
-                    <ContactTab src={contactTab} alt="Contact Us"/>
+                    <ContactTab src={contactTab} alt="Go to Contact page"/>
                 </Link>
             </ContactUs>
         </StyledHeader>
@@ -110,7 +90,7 @@ const FlexBox = styled.div`
     }
 `;
 
-const LogoLink = styled.a`
+const ImageHeader = styled.h1`
     margin: auto;
     margin-right: 1em;
     @media only screen and (max-width: 768px) {
@@ -148,64 +128,6 @@ const InnerFlexBox = styled(FlexBox)`
     margin-bottom: 0.5em;
     @media only screen and (max-width: 768px) {
         flex-flow: nowrap;
-    }
-`;
-
-const Square = styled.img`
-    width: 2em;
-    vertical-align: middle;
-    @media only screen and (max-width: 560px) {
-        display: none;
-    }
-`;
-
-const Grid = styled.div`
-    display: inline-grid;
-    grid-template-columns: auto;
-    grid-gap: 0.25em 3em;
-    text-align: left;
-    vertical-align: middle;
-    margin: 0em 0.75em;
-    font-size: small;
-    @media only screen and (max-width: 560px) {
-        grid-gap: 0.25em 1em;
-    }
-`;
-
-const Name = styled.p`
-    margin: 0;
-    grid-column: 1;
-    white-space: nowrap;
-    @media only screen and (max-width: 560px) {
-        color: #52af07;
-        text-transform: uppercase;
-    }
-`;
-
-const NameSpan = styled.span`
-    @media only screen and (max-width: 560px) {
-        display: none;
-    }
-`;
-
-const Number = styled.a`
-    white-space: nowrap;
-    text-decoration: none;
-    color: #aeca97;
-    grid-column: 2;
-    @media only screen and (max-width: 560px) {
-        color: #8cde97;
-    }
-`;
-
-const Email = styled.a`
-    white-space: nowrap;
-    text-decoration: none;
-    color: white;
-    grid-column: 3;
-    @media only screen and (max-width: 560px) {
-        order: 3;
-        grid-column: span 3;
     }
 `;
 
