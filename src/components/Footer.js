@@ -2,9 +2,10 @@ import React from 'react';
 import { Link, useStaticQuery, graphql } from 'gatsby';
 import styled from 'styled-components';
 
+import { ContactInformation } from './ContactInformation';
+
 import background from '../images/temp/headerBackground.png';
 import logo from '../images/temp/logo.png';
-import square from '../images/temp/square.png';
 import federation from '../images/temp/federation.svg';
 
 export const Footer = () => {
@@ -30,7 +31,7 @@ export const Footer = () => {
         <StyledFooter>
             <LeftSideContent>
                 <LogoContainer>
-                    <Logo src={logo} alt=""/>
+                    <Logo src={logo} alt="" />
                 </LogoContainer>
                 <Navigation>
                     <List>
@@ -43,22 +44,12 @@ export const Footer = () => {
             </LeftSideContent>
             <RightSideContent>
                 <ContactContainer>
-                    <Square src={square} alt=""/>
-                    <Grid>
-                        {contacts.slice(0, 2).map(contact => 
-                            <React.Fragment key={contact.id}>
-                                <Name>{contact.name}</Name>
-                                <Number href={`tel:${contact.number}`}>{contact.number}</Number>
-                                <Email href={`email:${contact.email}`}>{contact.email}</Email>
-                            </React.Fragment>
-                        )}
-                    </Grid>
-                    <Square src={square} alt=""/>
+                    <ContactInformation />
                 </ContactContainer>
                 <CompanyInfo>
                     <CompanyNumber>Company Number: 6286458</CompanyNumber>
                     <a href="https://www.fmb.org.uk/builder/genuine-builders-ltd.html">
-                        <Image src={federation} alt="Federation of Master Builders"/>
+                        <Image src={federation} alt="Federation of Master Builders" />
                     </a>
                 </CompanyInfo>
             </RightSideContent>
@@ -136,41 +127,6 @@ const ContactContainer = styled.div`
     @media only screen and (max-width: 768px) {
         display: none;
     }
-`;
-
-const Square = styled.img`
-    width: 2em;
-    vertical-align: middle;
-    align-self: center;
-`;
-
-const Grid = styled.div`
-    display: inline-grid;
-    grid-template-columns: auto;
-    grid-gap: 0.25em 3em;
-    text-align: left;
-    vertical-align: middle;
-    margin: 0em 0.75em;
-    font-size: small;
-`;
-
-const Name = styled.p`
-    margin: 0;
-    grid-column: 1;
-    white-space: nowrap;
-`;
-
-const Number = styled.a`
-    text-decoration: none;
-    color: #aeca97;
-    grid-column: 2;
-    white-space: nowrap;
-`;
-
-const Email = styled.a`
-    text-decoration: none;
-    color: white;
-    grid-column: 3;
 `;
 
 const CompanyInfo = styled.div`

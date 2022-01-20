@@ -121,11 +121,13 @@ export const ContactForm = () => {
                 </Label>
                 <Button type="reset" onClick={handleReset} disabled={loading}>Reset</Button>
                 <Button type="submit" disabled={loading}>
-                    {loading ? <img src={loadingIcon} alt="loading"/> : 'Submit'}
+                    {loading ? <img src={loadingIcon} alt="Submitting" /> : 'Submit'}
                 </Button>
-                <div>
-                    {error ? <p>Error: {error}</p> : ''}
+                <div aria-live="polite" role="status">
                     {message ? <p>{message}</p> : ''}
+                </div>
+                <div aria-live="assertive">
+                    {error ? <p>Error: {error}</p> : ''}
                 </div>
             </Fieldset>
         </StyledForm>

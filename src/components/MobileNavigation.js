@@ -8,13 +8,25 @@ import iconClose from '../images/temp/mobileNavClose.png';
 export const MobileNavigation = () => {
 
     const [open, setOpen] = useState(false);
+    
+    let timeout = null;
+
+    const onBlurHandler = () => {
+        timeout = setTimeout(() => {
+            setOpen(false);
+        });
+    };
+
+    const onFocusHandler = () => {
+        clearTimeout(timeout);
+    };
 
     return (
         <>
-            <Backdrop visible={open} onClick={() => setOpen(!open)}/>
-            <MobileHeader>
-                <Button onClick={() => setOpen(!open)}>
-                    <Hamburger src={open ? iconClose : iconOpen} alt=""/>
+            <Backdrop visible={open} onClick={() => setOpen(false)} />
+            <MobileHeader onBlur={() => onBlurHandler()} onFocus={() => onFocusHandler()}>
+                <Button onClick={() => setOpen(!open)} aria-label={!open ? `Open Navigation` : `Close Navigation`}>
+                    <Hamburger src={open ? iconClose : iconOpen} alt="" />
                 </Button>
             {open &&
                 <nav>
@@ -43,8 +55,8 @@ const MobileHeader = styled.div`
         top: 0;
         left: 0;
         box-shadow: 0 1px 5px #1c1c1c;
-    }
-        `;
+    };
+`;
 
 const Button = styled.button`
     padding: 0;
@@ -60,7 +72,7 @@ const Hamburger = styled.img`
         opacity: 75%;
         border-radius: 5px;
         background-color: black;
-    }
+    };
 `;
 
 const List = styled.ul`
