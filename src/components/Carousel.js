@@ -53,8 +53,8 @@ export const Carousel = props => {
             
         let timeout = () => {};
 
-        if(isMounted) {
-            if(!isHovering || forcing) {
+        if (isMounted) {
+            if (!isHovering || forcing) {
                 
                 // while carousel is idle, wait for given duration
                 timeout = setTimeout(() => {
@@ -66,7 +66,7 @@ export const Carousel = props => {
                     setTimeout(() => {
                         setSlide(false); // stops slide
 
-                        if(direction === "right") {
+                        if (direction === "right") {
                             // do these images have one after their position to jump to? if not then reset to beginning
 
                             (lastIndex !== images.length - 1) ? setLastIndex(lastIndex + 1) : setLastIndex(0);
@@ -111,7 +111,7 @@ export const Carousel = props => {
     }, [isMounted, isHovering, forcing, duration, props.duration, direction, lastIndex, index, nextIndex, images.length, isSwitched]);
 
     const forceSlides = (direction) => {
-        if(slide === false) { // prevents spam of button
+        if (slide === false) { // prevents spam of button
             setForcing(true);
             setTimeout(() => setForcing(false), 1000);
             setDuration(0);
@@ -120,13 +120,13 @@ export const Carousel = props => {
     };
 
     const slideToIndex = (e) => {
-        if(slide === false) { // prevents awkward switch if you hit a direction button
+        if (slide === false) { // prevents awkward switch if you hit a direction button
             // grab index from searching id in images array
             newIndex.current = images.findIndex((image) => image.id === e.target.id);
 
-            if(index !== newIndex.current) {
+            if (index !== newIndex.current) {
                 setIsSwitched(true);
-                if(newIndex.current <= index) {
+                if (newIndex.current <= index) {
                     setLastIndex(newIndex.current);
                     setNextIndex(newIndex.current + 2); // on left, nextIndex is made nextIndex-1, so newIndex+1 in this case would just be equal to index, hence +2
                     forceSlides("left");
@@ -148,23 +148,23 @@ export const Carousel = props => {
                     {slide && direction === "left" &&
                         <LastImage sliding={slide ? true : false}> 
                             <GatsbyImage
-                            image={images[lastIndex].gatsbyImageData} 
-                            alt="Genuine Builders York" 
+                                image={images[lastIndex].gatsbyImageData} 
+                                alt="Genuine Builders York" 
                             />
                         </LastImage>
                     }
                     <CurrentImage sliding={slide ? true : false} direction={direction}> 
                         <GatsbyImage
-                        image={images[index].gatsbyImageData} 
-                        alt="Genuine Builders York"
-                        loading="eager"
+                            image={images[index].gatsbyImageData} 
+                            alt="Genuine Builders York"
+                            loading="eager"
                         />
                     </CurrentImage>
                     {slide && direction === "right" &&
                         <NextImage sliding={slide ? true : false}>
                             <GatsbyImage
-                            image={images[nextIndex].gatsbyImageData} 
-                            alt="Genuine Builders York"
+                                image={images[nextIndex].gatsbyImageData} 
+                                alt="Genuine Builders York"
                             />
                         </NextImage>
                     }
@@ -172,7 +172,11 @@ export const Carousel = props => {
                 <Indexes>
                     {images.map((image, i) => 
                         <Index highlight={index + 1} active={slide ? true : false} key={image.id}>
-                            <IndexButton id={image.id} onClick={(e) => slideToIndex(e)} aria-label={i + 1 === index + 1 ? `Current Image` : `Skip to Image ${i + 1}`}></IndexButton>
+                            <IndexButton 
+                                id={image.id} 
+                                onClick={(e) => slideToIndex(e)} 
+                                aria-label={i + 1 === index + 1 ? `Current Image` : `Skip to Image ${i + 1}`}
+                            />
                         </Index>)}
                 </Indexes>
             </ImageContainer>
