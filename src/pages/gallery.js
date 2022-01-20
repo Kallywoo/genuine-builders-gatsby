@@ -73,7 +73,7 @@ export default function Gallery() {
     };
 
     const handleKeyDown = e => {
-        switch(e.keyCode) {
+        switch (e.keyCode) {
             case 9: // TAB
                 // tab traps the modal
                 if (e.shiftKey) { // is SHIFT also held?
