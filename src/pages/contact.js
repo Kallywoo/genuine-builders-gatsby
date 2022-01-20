@@ -27,7 +27,7 @@ export default function Contact({ data }) {
 
     return (
         <>
-            <SEO title="Contact Us"/>
+            <SEO title="Contact Us" />
             <StyledMain>
                 <MainContent>
                     <List aria-hidden="true">
@@ -51,7 +51,7 @@ export default function Contact({ data }) {
                                 )}
                             </Emails>
                         </ContactInfo>
-                        <ContactForm/>
+                        <ContactForm />
                     </FlexBox>
                 </MainContent>
             </StyledMain>
