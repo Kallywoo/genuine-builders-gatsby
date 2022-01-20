@@ -8,12 +8,12 @@ import background from '../images/temp/brickBackground.png';
 export const Layout = ({ children, location }) => {
   return (
     <>
-      <GlobalStyle/>
+      <GlobalStyle />
       <SkipLink href="#skip">Skip to main content</SkipLink>
-      <Header props={location}/>
+      <Header props={location} />
       <SkipContent id="skip" tabIndex="-1">Main Content</SkipContent>
       {children}
-      <Footer/>
+      <Footer />
     </>
   );
 };
