@@ -23,10 +23,10 @@ export const MobileNavigation = () => {
 
     return (
         <>
-            <Backdrop visible={open} onClick={() => setOpen(false)}/>
+            <Backdrop visible={open} onClick={() => setOpen(false)} />
             <MobileHeader onBlur={() => onBlurHandler()} onFocus={() => onFocusHandler()}>
                 <Button onClick={() => setOpen(!open)} aria-label={!open ? `Open Navigation` : `Close Navigation`}>
-                    <Hamburger src={open ? iconClose : iconOpen} alt=""/>
+                    <Hamburger src={open ? iconClose : iconOpen} alt="" />
                 </Button>
             {open &&
                 <nav>
