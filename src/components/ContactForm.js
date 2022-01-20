@@ -121,7 +121,7 @@ export const ContactForm = () => {
                 </Label>
                 <Button type="reset" onClick={handleReset} disabled={loading}>Reset</Button>
                 <Button type="submit" disabled={loading}>
-                    {loading ? <img src={loadingIcon} alt="Submitting"/> : 'Submit'}
+                    {loading ? <img src={loadingIcon} alt="Submitting" /> : 'Submit'}
                 </Button>
                 <div aria-live="polite" role="status">
                     {message ? <p>{message}</p> : ''}
