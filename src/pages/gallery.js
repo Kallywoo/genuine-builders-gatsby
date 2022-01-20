@@ -34,27 +34,27 @@ export default function Gallery() {
 
     const ShowComparisons = (e) => { // opens comparisons box
         setActive(true);
-        if(e.target.id && e.target.id !== id) { // does the clicked container have an ID and is it a different one to previous click?
+        if (e.target.id && e.target.id !== id) { // does the clicked container have an ID and is it a different one to previous click?
             setId(images.findIndex((element) => element.id === e.target.id)); // finds the project with same id as clicked for render to know which index is the object that contains the specific before/afters
-        } else if(!e.target.id) { // if there is no id
+        } else if (!e.target.id) { // if there is no id
             console.error("no id found for this image!");
         };
     };
 
     useEffect(() => {
-        if(active) {
+        if (active) {
             containerRef.current.focus(); // sets focus on comparisons box
         };
     }, [active, id]);
 
     useEffect(() => {
-        if(showModal) {
+        if (showModal) {
             moveLeft.current.focus(); // sets focus on modal
         };
     }, [showModal]);
 
     const ToggleModal = (e) => {
-        if(!showModal) {
+        if (!showModal) {
             setCachedTab(document.activeElement); // captures the last focused element to jump back to after the modal is closed (wonder if there's another way to do this with React?)
             setArrayIndex(masterArray.findIndex((element) => element.id === e.target.id)); // searches masterArray to find object with matching id as clicked container and saves it
             setShowModal(true);
@@ -65,7 +65,7 @@ export default function Gallery() {
     };
 
     const CycleImage = (direction) => {
-        if(direction === "left") {
+        if (direction === "left") {
             (arrayIndex === 0) ? setArrayIndex(masterArray.length - 1) : setArrayIndex(arrayIndex - 1);
         } else {
             (arrayIndex === masterArray.length - 1) ? setArrayIndex(0) : setArrayIndex(arrayIndex + 1);
@@ -108,7 +108,7 @@ export default function Gallery() {
 
     return (
         <>
-            <SEO title="Gallery"/>
+            <SEO title="Gallery" />
             <StyledMain>
                 <MainContent>
                     <List aria-hidden="true">
@@ -162,13 +162,13 @@ export default function Gallery() {
                                 key={image.id ? image.id : ""}
                                 aria-label="View Comparisons"
                             >
-                                <GatsbyImg image={image.after[0].thumb} alt="Genuine Builders York"/>
+                                <GatsbyImg image={image.after[0].thumb} alt="Genuine Builders York" />
                             </Button>
                         )}
                     </Grid>
                     {showModal && 
                         <Portal>
-                            <ModalOverlay onClick={ToggleModal}/>
+                            <ModalOverlay onClick={ToggleModal} />
                             <ModalDiv 
                                 ref={modalRef} 
                                 tabIndex={-2} 
@@ -178,14 +178,14 @@ export default function Gallery() {
                                 aria-description="Use the Left and Right Arrow keys (or J and K) to navigate through the images, press Escape to close."
                             >
                                 <ModalImage>
-                                    <GatsbyImg image={masterArray[arrayIndex].main} alt=""/>
+                                    <GatsbyImg image={masterArray[arrayIndex].main} alt="" />
                                     <ModalButton 
                                         ref={moveLeft} 
                                         left 
                                         onClick={() => CycleImage("left")} 
                                         aria-label="Previous Image"
                                     >
-                                        <img src={prev} alt=""/>
+                                        <img src={prev} alt="" />
                                     </ModalButton>
                                     <ModalButton 
                                         ref={moveRight} 
@@ -193,7 +193,7 @@ export default function Gallery() {
                                         onClick={() => CycleImage("right")} 
                                         aria-label="Next Image"
                                     >
-                                        <img src={next} alt=""/>
+                                        <img src={next} alt="" />
                                     </ModalButton>
                                 </ModalImage>
                                 <ModalInfo>
@@ -203,7 +203,7 @@ export default function Gallery() {
                                         onClick={ToggleModal} 
                                         aria-label="Close Modal"
                                     >
-                                        <Image src={close} alt=""/>
+                                        <Image src={close} alt="" />
                                     </ModalClose>
                                 </ModalInfo>
                             </ModalDiv>
