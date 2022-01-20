@@ -52,7 +52,7 @@ export default function Main({ data }) {
 
     return (
         <>
-            <SEO title="Home"/>
+            <SEO title="Home" />
             <StyledMain>
                 <MainContent>
                     <List aria-hidden="true">
@@ -62,11 +62,11 @@ export default function Main({ data }) {
                         <ListItem>External Works</ListItem>
                         <ListItem>Business premises maintained</ListItem>
                     </List>
-                    <Carousel duration="5000"/>
+                    <Carousel duration="5000" />
                     {mainText && renderRichText(mainText, options)}
                     <Motto>{motto}</Motto>
                     <SecondaryContent>
-                        <Reviews fade="1000" duration="5000"/>
+                        <Reviews fade="1000" duration="5000" />
                         <Guarantee>{guarantee}</Guarantee>
                     </SecondaryContent>
                     {/* <Twitter>Tweets by GenuineBuilders</Twitter> */}
