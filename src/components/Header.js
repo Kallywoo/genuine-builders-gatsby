@@ -38,23 +38,23 @@ export const Header = ({ props }) => {
     return (
         <StyledHeader>
             <MainHeader>
-                <MobileNavigation/>
+                <MobileNavigation />
                 <FlexBox>
                     <ImageHeader>
-                        <Link to="/"><Logo src={logoImage} alt="Genuine Builders Limited"/></Link>
+                        <Link to="/"><Logo src={logoImage} alt="Genuine Builders Limited" /></Link>
                     </ImageHeader>
                     <ContactContainer>
                         <ContactHeader>{description}</ContactHeader>
                         <InnerFlexBox>
-                            <ContactInformation/>
+                            <ContactInformation />
                         </InnerFlexBox>
                     </ContactContainer>
                 </FlexBox>
             </MainHeader>
-            <Navigation/>
+            <Navigation />
             <ContactUs visible={pathname !== "/contact" ? true : false}>
                 <Link to="/contact">
-                    <ContactTab src={contactTab} alt="Go to Contact page"/>
+                    <ContactTab src={contactTab} alt="Go to Contact page" />
                 </Link>
             </ContactUs>
         </StyledHeader>
