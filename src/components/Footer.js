@@ -31,7 +31,7 @@ export const Footer = () => {
         <StyledFooter>
             <LeftSideContent>
                 <LogoContainer>
-                    <Logo src={logo} alt=""/>
+                    <Logo src={logo} alt="" />
                 </LogoContainer>
                 <Navigation>
                     <List>
@@ -44,12 +44,12 @@ export const Footer = () => {
             </LeftSideContent>
             <RightSideContent>
                 <ContactContainer>
-                    <ContactInformation/>
+                    <ContactInformation />
                 </ContactContainer>
                 <CompanyInfo>
                     <CompanyNumber>Company Number: 6286458</CompanyNumber>
                     <a href="https://www.fmb.org.uk/builder/genuine-builders-ltd.html">
-                        <Image src={federation} alt="Federation of Master Builders"/>
+                        <Image src={federation} alt="Federation of Master Builders" />
                     </a>
                 </CompanyInfo>
             </RightSideContent>
