@@ -26,7 +26,7 @@ export const ContactInformation = () => {
 
     return (
         <>
-            <Square src={square} alt=""/>
+            <Square src={square} alt="" />
             <Grid>
                 {contacts.slice(0, 2).map(contact => 
                     <React.Fragment key={contact.id}>
@@ -43,7 +43,7 @@ export const ContactInformation = () => {
                     </React.Fragment>
                 )}
             </Grid>
-            <Square src={square} alt=""/>
+            <Square src={square} alt="" />
         </>
     );
 };
