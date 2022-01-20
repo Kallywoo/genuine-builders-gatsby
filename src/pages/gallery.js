@@ -76,7 +76,7 @@ export default function Gallery() {
         switch(e.keyCode) {
             case 9: // TAB
                 // tab traps the modal
-                if(e.shiftKey) { // is SHIFT also held?
+                if (e.shiftKey) { // is SHIFT also held?
                     if (document.activeElement === moveLeft.current) {
                         closeButton.current.focus();
                         e.preventDefault();
