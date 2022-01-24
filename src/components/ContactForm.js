@@ -37,10 +37,10 @@ export const ContactForm = () => {
 
         const body = {
             ...values,
-            recipient: `${process.env.SES_RECIPIENT}`
+            RECIPIENT: `${process.env.SES_RECIPIENT}`
         };
 
-        console.log(body);
+        // console.log(body);
 
         const res = await fetch(`${process.env.API_ENDPOINT}`, {
             method: 'POST',
@@ -54,10 +54,12 @@ export const ContactForm = () => {
 
         if(res.status >= 400 && res.status < 600) {
             setLoading(false);
+            setMessage(''); // clears message if user has already successfully submitted once before an error
             setError(text.message);
         } else {
             // it worked!
             setLoading(false);
+            setError(''); // clears message if user has successfully submitted after an error
             setMessage('Email successfully sent!');
             handleReset();
         };
@@ -127,7 +129,7 @@ export const ContactForm = () => {
                     {message ? <p>{message}</p> : ''}
                 </div>
                 <div aria-live="assertive">
-                    {error ? <p>Error: {error}</p> : ''}
+                {error ? <RedError>Error: {error}</RedError> : ''}
                 </div>
             </Fieldset>
         </StyledForm>
@@ -248,4 +250,8 @@ const Button = styled.button`
         border-color: #517d5b;
         color: #517d5b;
     };
+`;
+
+const RedError = styled.p`
+    color: red;
 `;
