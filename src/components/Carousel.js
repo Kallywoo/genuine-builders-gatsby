@@ -3,7 +3,7 @@
 import { graphql, useStaticQuery } from 'gatsby';
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
-import { GatsbyImage } from 'gatsby-plugin-image';
+// import { GatsbyImage } from 'gatsby-plugin-image';
 import { useSwipeable } from 'react-swipeable';
 
 export const Carousel = props => {
@@ -13,7 +13,10 @@ export const Carousel = props => {
             contentfulImageCarousel {
                 images {
                     id
-                    gatsbyImageData#(placeholder: BLURRED)
+                    # gatsbyImageData(placeholder: BLURRED)
+                    fluid {
+                        src
+                    }
                 }
             }
         }
@@ -146,36 +149,31 @@ export const Carousel = props => {
                 <SlideButton onClick={() => forceSlides("right")} right aria-label="Next Image">›</SlideButton>
                 <div {...handlers}>
                     {slide && direction === "left" &&
-                        <LastImage sliding={slide ? true : false}> 
-                            <GatsbyImage
-                                image={images[lastIndex].gatsbyImageData} 
-                                alt="Genuine Builders York" 
-                            />
-                        </LastImage>
-                    }
-                    <CurrentImage sliding={slide ? true : false} direction={direction}> 
-                        <GatsbyImage
-                            image={images[index].gatsbyImageData} 
-                            alt="Genuine Builders York"
-                            loading="eager"
-                        />
-                    </CurrentImage>
+                        <LastImage 
+                            src={images[lastIndex].fluid.src} 
+                            alt="Genuine Builders York" 
+                            sliding={slide ? true : false}
+                        />}
+                    <CurrentImage 
+                        src={images[index].fluid.src} 
+                        alt="Genuine Builders York"
+                        sliding={slide ? true : false} 
+                        direction={direction}
+                    />
                     {slide && direction === "right" &&
-                        <NextImage sliding={slide ? true : false}>
-                            <GatsbyImage
-                                image={images[nextIndex].gatsbyImageData} 
-                                alt="Genuine Builders York"
-                            />
-                        </NextImage>
-                    }
+                        <NextImage 
+                            src={images[nextIndex].fluid.src} 
+                            alt="Genuine Builders York"
+                            sliding={slide ? true : false}
+                        />}
                 </div>
                 <Indexes>
                     {images.map((image, i) => 
                         <Index highlight={index + 1} active={slide ? true : false} key={image.id}>
                             <IndexButton 
-                                id={image.id} 
-                                onClick={(e) => slideToIndex(e)} 
-                                aria-label={i + 1 === index + 1 ? `Current Image` : `Skip to Image ${i + 1}`}
+                            id={image.id} 
+                            onClick={(e) => slideToIndex(e)}
+                            aria-label={i + 1 === index + 1 ? `Current Image` : `Skip to Image ${i + 1}`}
                             />
                         </Index>)}
                 </Indexes>
@@ -233,7 +231,7 @@ const SlideButton = styled.button`
     }
 `;
 
-const LastImage = styled.div`
+const LastImage = styled.img`
     position: absolute;
     width: 100%;
     top: 0;
@@ -244,7 +242,7 @@ const LastImage = styled.div`
     animation-timing-function: ease-out;
 `;
 
-const CurrentImage = styled.div`
+const CurrentImage = styled.img`
     display: block;
     height: auto;
     max-width: 100%;
@@ -255,7 +253,7 @@ const CurrentImage = styled.div`
     animation-timing-function: ease-out;
 `;
 
-const NextImage = styled.div`
+const NextImage = styled.img`
     position: absolute;
     width: 100%;
     top: 0;
