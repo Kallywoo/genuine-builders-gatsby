@@ -1,4 +1,4 @@
-// can probably just replace this all with some plug-in instead
+// can probably just replace this all with some plug-in instead, lots of re-renders! seemingly no performance hit though..
 
 import { graphql, useStaticQuery } from 'gatsby';
 import React, { useState, useEffect, useRef } from 'react';
@@ -13,7 +13,7 @@ export const Carousel = props => {
             contentfulImageCarousel {
                 images {
                     id
-                    gatsbyImageData(placeholder: BLURRED)
+                    gatsbyImageData#(placeholder: BLURRED)
                 }
             }
         }
