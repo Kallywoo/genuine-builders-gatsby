@@ -51,7 +51,6 @@ const ListItem = styled.li`
 
 const StyledLink = styled(Link)`
     background-image: url(${navBackground});
-    ${props => console.log(props)}
     background-size: 100% 100%;
     color: #a8dc7e;
     text-decoration: none;
