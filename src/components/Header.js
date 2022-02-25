@@ -41,7 +41,7 @@ export const Header = ({ props }) => {
                 <MobileNavigation />
                 <FlexBox>
                     <ImageHeader>
-                        <Link to="/"><Logo src={logoImage} alt="Genuine Builders Limited" /></Link>
+                        <Link to="/"><Logo src={logoImage} alt="Genuine Builders Limited" width="300" height="150" /></Link>
                     </ImageHeader>
                     <ContactContainer>
                         <ContactHeader>{description}</ContactHeader>

@@ -42,7 +42,7 @@ export default function Contact({ data }) {
                             {contacts.map(contact => (
                                 <React.Fragment key={contact.id}>
                                     <Name>{contact.name}</Name>
-                                    <Number href={`tel:${contact.number}`}>{contact.number}</Number>
+                                    <Number href={`tel:${contact.number.replace(/\s+/g, '')}`}>{contact.number}</Number>
                                 </React.Fragment>
                             ))}
                             <Emails>

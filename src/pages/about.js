@@ -54,13 +54,13 @@ export default function About({ data }) {
                     </List>
                     <Header>{aboutHeader}</Header>
                     {aboutParagraph && renderRichText(aboutParagraph)}
-                    <Image src={image} alt="Genuine Builders York vehicles" />
+                    <Image src={image} alt="Genuine Builders York vehicles" width="716" height="348" />
                     <Header>Our Values</Header>
                     {values.map(value => 
                         <p key={value.id}><Category>{value.value}:</Category> {value.description.description}</p>
                     )}
                     <LiabilityLink to="/liability">Click here to view our liability insurance certificate</LiabilityLink>
-                    <Image src={image} alt="Genuine Builders York vehicles" />
+                    <Image src={image} alt="Genuine Builders York vehicles" width="716" height="348" />
                     <Summary>
                         <Header>'In a Nutshell'</Header>
                         <Want>If you want a builder that starts and finishes on time.</Want>
