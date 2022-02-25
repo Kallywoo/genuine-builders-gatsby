@@ -6,13 +6,16 @@ import navBackground from '../images/temp/navBackground.png';
 import navBackgroundActive from '../images/temp/navBackgroundActive.png';
 
 export const Navigation = () => {
+
+    const activeStyle = { backgroundImage: `url(${navBackgroundActive})`};
+    
     return (
         <StyledNavigation>
             <List>
-                <ListItem><StyledLink to="/" activeClassName="active">Home</StyledLink></ListItem>
-                <ListItem><StyledLink to="/about" activeClassName="active">About Us</StyledLink></ListItem>
-                <ListItem><StyledLink to="/gallery" activeClassName="active">Gallery</StyledLink></ListItem>
-                <ListItem><StyledLink to="/contact" activeClassName="active">Contact</StyledLink></ListItem>
+                <ListItem><StyledLink to="/" activeClassName={true} activeStyle={activeStyle}>Home</StyledLink></ListItem>
+                <ListItem><StyledLink to="/about" partiallyActive={true} activeStyle={activeStyle}>About Us</StyledLink></ListItem>
+                <ListItem><StyledLink to="/gallery" partiallyActive={true} activeStyle={activeStyle}>Gallery</StyledLink></ListItem>
+                <ListItem><StyledLink to="/contact" partiallyActive={true} activeStyle={activeStyle}>Contact</StyledLink></ListItem>
             </List>
         </StyledNavigation>
     );
@@ -48,13 +51,14 @@ const ListItem = styled.li`
 
 const StyledLink = styled(Link)`
     background-image: url(${navBackground});
+    ${props => console.log(props)}
     background-size: 100% 100%;
     color: #a8dc7e;
     text-decoration: none;
     min-width: 7em;
     padding: 0.8ex 1ex;
     
-    &.active, &:hover {
+    &:hover {
         background-image: url(${navBackgroundActive});
     };
 `;
