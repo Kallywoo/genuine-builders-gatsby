@@ -31,7 +31,7 @@ export const Footer = () => {
         <StyledFooter>
             <LeftSideContent>
                 <LogoContainer>
-                    <Logo src={logo} alt="" />
+                    <Logo src={logo} alt="" width="330" height="165" />
                 </LogoContainer>
                 <Navigation>
                     <List>

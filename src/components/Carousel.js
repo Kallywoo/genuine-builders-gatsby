@@ -159,6 +159,8 @@ export const Carousel = props => {
                         alt="Genuine Builders York"
                         sliding={slide ? true : false} 
                         direction={direction}
+                        width="716"
+                        height="348"
                     />
                     {slide && direction === "right" &&
                         <NextImage 
