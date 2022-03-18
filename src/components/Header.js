@@ -96,7 +96,6 @@ const MainHeader = styled.div`
     background-color: #38454c;
     background-image: url(${background});
     padding: 0.5em;
-    padding-bottom: 1em;
 
     @media only screen and (max-width: 560px) {
         padding-top: 4em;
@@ -126,6 +125,7 @@ const FlexBox = styled.div`
 const ImageHeader = styled.h1`
     margin: auto;
     margin-right: 1em;
+    padding-bottom: 0.25em;
 
     @media only screen and (max-width: 768px) {
         margin: auto;

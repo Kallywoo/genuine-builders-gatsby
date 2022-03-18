@@ -85,6 +85,16 @@ export default function Gallery({ data }) {
         };
     };
 
+    const ChangeComparisons = (direction) => {
+        setId((id) => {
+            if (direction === "left") {
+                return id !== 0 ? --id : images.length - 1;
+            } else {
+                return id !== images.length - 1 ? ++id : 0;
+            };
+        });
+    };
+
     const ToggleModal = (e) => {
         setCachedTab(document.activeElement); // captures the last focused element to jump back to after the modal is closed (wonder if there's another way to do this with React?)
         arrayIndex.current = masterArray.findIndex((element) => element.id === e.target.id); // searches masterArray to find object with matching id as clicked container and saves it
@@ -103,13 +113,14 @@ export default function Gallery({ data }) {
                     </List>
                     {active &&
                         <Comparisons ref={containerRef} tabIndex={-1}>
-                            <ComparisonContainer>
-                                <Span>Before</Span>
+                            <SlideButton onClick={() => ChangeComparisons("left")} aria-label="Click to see Previous Comparisons">‹</SlideButton>
+                            <Span>Before</Span>
+                            <ImageContainer>
                                 {images[id]?.before.map(image =>
                                     <OpenModalButton 
-                                        id={image.id} 
-                                        key={image.id} 
-                                        onClick={(e) => ToggleModal(e)}
+                                    id={image.id} 
+                                    key={image.id} 
+                                    onClick={(e) => ToggleModal(e)}
                                         aria-label="Open Gallery Modal"
                                     >
                                         <GatsbyImg 
@@ -118,9 +129,9 @@ export default function Gallery({ data }) {
                                         />
                                     </OpenModalButton>
                                 )}
-                            </ComparisonContainer>
-                            <ComparisonContainer>
-                                <Span>After</Span>
+                            </ImageContainer>
+                            <Span>After</Span>
+                            <ImageContainer>
                                 {images[id]?.after.map(image =>
                                     <OpenModalButton 
                                         id={image.id} 
@@ -134,17 +145,19 @@ export default function Gallery({ data }) {
                                         />
                                     </OpenModalButton>
                                 )}
-                            </ComparisonContainer>
+                            </ImageContainer>
+                            <SlideButton onClick={() => ChangeComparisons("right")} aria-label="Click to see Next Comparisons" right>›</SlideButton>
                         </Comparisons>
                     }
-                    {images.length ? 
+                    {images?.length ? 
                         <Grid>
-                            {images?.map(image => 
+                            {images?.map((image, i) => 
                                 <Button 
                                     onClick={ShowComparisons} 
                                     id={image.id ? image.id : ""}
                                     key={image.id ? image.id : ""}
                                     aria-label="View Comparisons"
+                                    $active={active && i === id ? true : false}
                                 >
                                     <GatsbyImg image={image.after[0].thumb} alt="Genuine Builders York" />
                                 </Button>
@@ -238,11 +251,16 @@ const ListItem = styled.li`
 
 const Grid = styled.div`
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 1em;
 
     @media only screen and (max-width: 560px) {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
+    };
+
+    @media only screen and (max-width: 414px) {
+        margin: 0em 1em;
+        padding-bottom: 1em;
     };
 `;
 
@@ -251,6 +269,8 @@ const Button = styled.button`
     padding: 1em;
     background-color: #475159;
     border-style: none;
+    border: ${props => props.$active ? "2px solid #a0df6d" : ""};
+    box-shadow: ${props => props.$active ? "0 0 10px #a0df6d" : ""};
 `;
 
 const GatsbyImg = styled(GatsbyImage)`
@@ -260,29 +280,54 @@ const GatsbyImg = styled(GatsbyImage)`
 `;
 
 const Comparisons = styled.div`
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 1fr repeat(2, 3fr) 1fr;
+    grid-template-rows: 1.5em 1fr;
     margin-bottom: 1em;
     padding: 1em;
     background-color: #475159;
-`;
-
-const ComparisonContainer = styled.div`
     text-align: center;
 
-    &:nth-child(2) {
-        @media only screen and (max-width: 560px) {
-            margin-left: 1em;
-        };
+    @media only screen and (max-width: 560px) {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: 3.5em 1.5em 1fr;
+        padding: 0;
+        padding-bottom: 1em;
     };
 `;
 
 const Span = styled.span`
     color: #a0df6d;
-    text-decoration: underline;
+    font-weight: bold;
+    margin: 0 0.5em;
+
+    :nth-of-type(1) {
+        grid-column: 2;
+    };
+
+    @media only screen and (max-width: 560px) {
+        grid-row: 2;
+
+        :nth-of-type(1) {
+            grid-column: 1;
+        };
+    };
 
     @media only screen and (max-width: 414px) {
-        font-size: x-large;
+        font-size: 1.15em;
+    };
+`;
+
+const ImageContainer = styled.div`
+    grid-row: 2;
+    margin: 0 0.5em;
+
+    @media only screen and (max-width: 560px) {
+        grid-row: 3;
+    };
+
+    @media only screen and (max-width: 414px) {
+        margin: 0 1.25em;
     };
 `;
 
@@ -291,5 +336,36 @@ const OpenModalButton = styled(Button)`
     padding: 0em;
     border: 3px solid #2a3035;
     border-radius: 6px;
-    margin: 0.5em 0em;
+    margin: 0.5em auto;
+`;
+
+const SlideButton = styled.button`
+    background-color: #222222;
+    color: #ffffff;
+    border-style: none;
+    font-size: xx-large;
+    font-weight: bold;
+    line-height: 0em;
+    padding-bottom: 5px;
+    border-radius: 0;
+    border: 1px solid #ffffff;
+    opacity: 0.5;
+    cursor: pointer;
+    width: 1em;
+    grid-row: 2;
+
+    &:hover {
+        opacity: 0.8;
+    };
+
+    &:nth-of-type(2) {
+        margin-left: auto;
+    };
+
+    @media only screen and (max-width: 560px) {
+        width: 100%;
+        height: 1.5em;
+        margin-bottom: 0.5em;
+        grid-row: 1;
+    };
 `;

@@ -83,7 +83,7 @@ const Grid = styled.div`
     };
 
     @media only screen and (max-width: 414px) {
-        font-size: medium;
+        font-size: 0.9em;
     };
 `;
 
