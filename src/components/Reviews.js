@@ -2,7 +2,7 @@ import { graphql, useStaticQuery } from 'gatsby';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-export const Reviews = ({fade, duration}) => {
+export const Reviews = ({ fade, duration }) => {
     
     const data = useStaticQuery(graphql`
         query {
@@ -19,55 +19,39 @@ export const Reviews = ({fade, duration}) => {
 
     const [fadeOut, setFadeOut] = useState(false);
     const [index, setIndex] = useState(0);
-    
-    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        setIsMounted(true);
+        setFadeOut(false); // fades in
 
-        return () => setIsMounted(false);
-    }, []);
+        // while in faded-in (visible) state, wait 3 seconds
+        let timeout = setTimeout(() => {
+            setFadeOut(true); // fades out
+        
+            // wait the time it takes to fade out, then swap
+            setTimeout(() => {
 
-    useEffect(() => {
+                // while faded out (invisible), updates the index
+                // in turn calling useEffect and repeating the cycle
+                setIndex((i) => i !== reviews.length - 1 ? ++i : 0);
 
-        let timeout = () => {};
-
-        if(isMounted) {
-            setFadeOut(false); // fades in
-
-            // while in faded-in (visible) state, wait 3 seconds
-            timeout = setTimeout(() => {
-
-                setFadeOut(true); // fades out
+            }, fade);
             
-                // wait the time it takes to fade out, then swap
-                setTimeout(() => {
-
-                    // while faded out (invisible), updates the index
-                    // in turn calling useEffect and repeating the cycle
-                    if(index !== reviews.length - 1) {
-                        setIndex(index + 1);
-                    } else {
-                        setIndex(0);
-                    };
-
-                }, fade);
-
-            }, duration);
-        } else {
-            clearTimeout(timeout);
-        };
+        }, duration);
 
         return () => clearTimeout(timeout);
-        
-    }, [isMounted, index, fade, duration, reviews.length]);
 
-    return (
-        <Blockquote fade={fadeOut ? true : false}>
-            <p>“ {reviews[index].quote} ”</p>
-            <Cite>{reviews[index].cite}</Cite>
-        </Blockquote>
-    );
+    }, [index, fade, duration, reviews.length]);
+
+    if (reviews.length) {
+        return (
+            <Blockquote fade={fadeOut ? true : false}>
+                <p>“ {reviews[index].quote} ”</p>
+                <Cite>{reviews[index].cite}</Cite>
+            </Blockquote>
+        );
+    } else {
+        return null;
+    };
 };
 
 const Blockquote = styled.blockquote`
@@ -87,11 +71,20 @@ const Blockquote = styled.blockquote`
     cite {
         font-size: 0.9em;
         font-weight: normal;
-    }
+    };
 
     @media only screen and (max-width: 560px) {
         width: 100%;
-    }
+    };
+
+    @media only screen and (max-width: 414px) {
+        width: 95%;
+        padding-bottom: 1.5em;
+
+        p {
+            margin-top: 0.5em;
+        };
+    };
 `;
 
 const Cite = styled.cite`

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'gatsby';
 import styled from 'styled-components';
 
-import iconOpen from '../images/temp/mobileNavButton.png';
-import iconClose from '../images/temp/mobileNavClose.png';
+import iconOpen from '../images/mobile-nav-open.png';
+import iconClose from '../images/mobile-nav-close.png';
 
 export const MobileNavigation = () => {
 
@@ -21,6 +21,8 @@ export const MobileNavigation = () => {
         clearTimeout(timeout);
     };
 
+    const activeStyle = { opacity: "0.5" };
+
     return (
         <>
             <Backdrop visible={open} onClick={() => setOpen(false)} />
@@ -28,16 +30,24 @@ export const MobileNavigation = () => {
                 <Button onClick={() => setOpen(!open)} aria-label={!open ? `Open Navigation` : `Close Navigation`}>
                     <Hamburger src={open ? iconClose : iconOpen} alt="" />
                 </Button>
-            {open &&
-                <nav>
-                    <List>
-                        <ListItem><StyledLink to="/">Home</StyledLink></ListItem>
-                        <ListItem><StyledLink to="/about">About Us</StyledLink></ListItem>
-                        <ListItem><StyledLink to="/gallery">Gallery</StyledLink></ListItem>
-                        <ListItem><StyledLink to="/contact">Contact</StyledLink></ListItem>
-                    </List>
-                </nav>
-            }
+                {open &&
+                    <nav>
+                        <List>
+                            <ListItem>
+                                <StyledLink to="/" activeStyle={activeStyle}>Home</StyledLink>
+                            </ListItem>
+                            <ListItem>
+                                <StyledLink to="/about" partiallyActive={true} activeStyle={activeStyle}>About Us</StyledLink>
+                            </ListItem>
+                            <ListItem>
+                                <StyledLink to="/gallery" partiallyActive={true} activeStyle={activeStyle}>Gallery</StyledLink>
+                            </ListItem>
+                            <ListItem>
+                                <StyledLink to="/contact" partiallyActive={true} activeStyle={activeStyle}>Contact</StyledLink>
+                            </ListItem>
+                        </List>
+                    </nav>
+                }
             </MobileHeader>
         </>
     );
@@ -45,6 +55,7 @@ export const MobileNavigation = () => {
 
 const MobileHeader = styled.div`
     display: none;
+
     @media only screen and (max-width: 560px) {
         display: block;
         padding: 0.5em;
@@ -55,6 +66,7 @@ const MobileHeader = styled.div`
         top: 0;
         left: 0;
         box-shadow: 0 1px 5px #1c1c1c;
+        z-index: 1;
     };
 `;
 
@@ -68,6 +80,7 @@ const Button = styled.button`
 const Hamburger = styled.img`
     display: block;
     width: 100%;
+    
     &:active {
         opacity: 75%;
         border-radius: 5px;

@@ -17,19 +17,18 @@
   },
   "dependencies": {
     "babel-plugin-styled-components": "^1.13.2",
-    "gatsby": "^3.11.1",
-    "gatsby-plugin-image": "^1.11.0",
-    "gatsby-plugin-portal": "^1.0.7",
-    "gatsby-plugin-react-helmet": "^4.14.0",
-    "gatsby-plugin-sharp": "^3.11.0",
-    "gatsby-plugin-styled-components": "^4.11.0",
-    "gatsby-source-contentful": "^5.11.1",
-    "gatsby-source-filesystem": "^3.11.0",
-    "gatsby-transformer-sharp": "^3.11.0",
+    "gatsby": "^4.8.1",
+    "gatsby-plugin-image": "^2.8.1",
+    "gatsby-plugin-react-helmet": "^5.8.0",
+    "gatsby-plugin-sharp": "^4.8.1",
+    "gatsby-plugin-styled-components": "^5.8.0",
+    "gatsby-source-contentful": "^7.6.1",
+    "gatsby-source-filesystem": "^4.8.1",
+    "gatsby-transformer-sharp": "^4.8.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",
     "react-swipeable": "^6.2.0",
-    "styled-components": "^5.3.0"
+    "styled-components": "^5.3.1"
   }
 }

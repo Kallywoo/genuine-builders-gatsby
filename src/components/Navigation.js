@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 
-import navBackground from '../images/temp/navBackground.png';
-import navBackgroundActive from '../images/temp/navBackgroundActive.png';
+import navBackground from '../images/nav-item-background.png';
+import navBackgroundActive from '../images/nav-item-background-active.png';
 
 export const Navigation = () => {
 
@@ -12,10 +12,18 @@ export const Navigation = () => {
     return (
         <StyledNavigation>
             <List>
-                <ListItem><StyledLink to="/" activeClassName={true} activeStyle={activeStyle}>Home</StyledLink></ListItem>
-                <ListItem><StyledLink to="/about" partiallyActive={true} activeStyle={activeStyle}>About Us</StyledLink></ListItem>
-                <ListItem><StyledLink to="/gallery" partiallyActive={true} activeStyle={activeStyle}>Gallery</StyledLink></ListItem>
-                <ListItem><StyledLink to="/contact" partiallyActive={true} activeStyle={activeStyle}>Contact</StyledLink></ListItem>
+                <ListItem>
+                    <StyledLink to="/" activeStyle={activeStyle}>Home</StyledLink>
+                </ListItem>
+                <ListItem>
+                    <StyledLink to="/about" partiallyActive={true} activeStyle={activeStyle}>About Us</StyledLink>
+                </ListItem>
+                <ListItem>
+                    <StyledLink to="/gallery" partiallyActive={true} activeStyle={activeStyle}>Gallery</StyledLink>
+                </ListItem>
+                <ListItem>
+                    <StyledLink to="/contact" partiallyActive={true} activeStyle={activeStyle}>Contact</StyledLink>
+                </ListItem>
             </List>
         </StyledNavigation>
     );
@@ -27,18 +35,24 @@ const StyledNavigation = styled.nav`
     height: 15px;
     background-color: #2a3035;
     justify-content: center;
+
+    @media only screen and (max-width: 414px) {
+        background-color: #1f2327;
+    };
 `;
 
 const List = styled.ul`
     margin: 0;
     margin-left: 12em;
+
     @media only screen and (max-width: 768px) {
         margin-left: 0;
         padding: 0;
-    }
+    };
+
     @media only screen and (max-width: 560px) {
         display: none;
-    }
+    };
 `;
 
 const ListItem = styled.li`

@@ -2,7 +2,7 @@ import React from 'react';
 import { graphql, useStaticQuery } from 'gatsby';
 import styled from 'styled-components';
 
-import square from '../images/temp/square.png';
+import square from '../images/square.png';
 
 export const ContactInformation = () => {
 
@@ -25,7 +25,7 @@ export const ContactInformation = () => {
     contacts.sort((a, b) => a.listOrder - b.listOrder);
 
     return (
-        <>
+        <Address>
             <Square src={square} alt="" />
             <Grid>
                 {contacts.slice(0, 2).map(contact => 
@@ -49,18 +49,24 @@ export const ContactInformation = () => {
                 )}
             </Grid>
             <Square src={square} alt="" />
-        </>
+        </Address>
     );
 };
+
+const Address = styled.address`
+    display: inherit;
+    font-style: normal;
+`;
 
 const Square = styled.img`
     width: 2em;
     height: 2em;
     display: flex;
     align-self: center;
+
     @media only screen and (max-width: 560px) {
         display: none;
-    }
+    };
 `;
 
 const Grid = styled.div`
@@ -71,35 +77,44 @@ const Grid = styled.div`
     vertical-align: middle;
     margin: 0em 0.75em;
     font-size: small;
+
     @media only screen and (max-width: 560px) {
         grid-gap: 0.25em 1em;
-    }
+    };
+
+    @media only screen and (max-width: 414px) {
+        font-size: medium;
+    };
 `;
 
 const Name = styled.p`
     margin: 0;
     grid-column: 1;
     white-space: nowrap;
+    
     @media only screen and (max-width: 560px) {
         color: #52af07;
         text-transform: uppercase;
-    }
+    };
 `;
 
+/*
 const NameSpan = styled.span`
     @media only screen and (max-width: 560px) {
         display: none;
-    }
+    };
 `;
+*/
 
 const Number = styled.a`
     white-space: nowrap;
     text-decoration: none;
     color: #aeca97;
     grid-column: 2;
+
     @media only screen and (max-width: 560px) {
         color: #8cde97;
-    }
+    };
 `;
 
 const Email = styled.a`
@@ -107,8 +122,9 @@ const Email = styled.a`
     text-decoration: none;
     color: white;
     grid-column: 3;
+
     @media only screen and (max-width: 560px) {
         order: 3;
         grid-column: span 3;
-    }
+    };
 `;
