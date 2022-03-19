@@ -41,6 +41,7 @@ export default function Gallery({ data }) {
 
     const [active, setActive] = useState(false);
     const [id, setId] = useState(0);
+    const [swapped, hasSwapped] = useState(false);
 
     const [cachedTab, setCachedTab] = useState(null);
 
@@ -71,10 +72,10 @@ export default function Gallery({ data }) {
     }, [images]);
 
     useEffect(() => {
-        if (active) {
+        if (active && !swapped) {
             containerRef.current.focus(); // sets focus on comparisons box
         };
-    }, [active, id]);
+    }, [active, id, swapped]);
 
     const ShowComparisons = (e) => { // opens comparisons box
         setActive(true);
@@ -93,6 +94,7 @@ export default function Gallery({ data }) {
                 return id !== images.length - 1 ? ++id : 0;
             };
         });
+        hasSwapped(true);
     };
 
     const ToggleModal = (e) => {
@@ -118,9 +120,9 @@ export default function Gallery({ data }) {
                             <ImageContainer>
                                 {images[id]?.before.map(image =>
                                     <OpenModalButton 
-                                    id={image.id} 
-                                    key={image.id} 
-                                    onClick={(e) => ToggleModal(e)}
+                                        id={image.id} 
+                                        key={image.id} 
+                                        onClick={(e) => ToggleModal(e)}
                                         aria-label="Open Gallery Modal"
                                     >
                                         <GatsbyImg 
@@ -153,7 +155,10 @@ export default function Gallery({ data }) {
                         <Grid>
                             {images?.map((image, i) => 
                                 <Button 
-                                    onClick={ShowComparisons} 
+                                    onClick={(e) => {
+                                        hasSwapped(false);
+                                        ShowComparisons(e);
+                                    }} 
                                     id={image.id ? image.id : ""}
                                     key={image.id ? image.id : ""}
                                     aria-label="View Comparisons"
@@ -269,8 +274,8 @@ const Button = styled.button`
     padding: 1em;
     background-color: #475159;
     border-style: none;
-    border: ${props => props.$active ? "2px solid #a0df6d" : ""};
-    box-shadow: ${props => props.$active ? "0 0 10px #a0df6d" : ""};
+    border: ${props => props.$active ? "2px solid #a0df6d80" : ""};
+    box-shadow: ${props => props.$active ? "0 0 10px #a0df6d80" : ""};
 `;
 
 const GatsbyImg = styled(GatsbyImage)`
@@ -290,7 +295,7 @@ const Comparisons = styled.div`
 
     @media only screen and (max-width: 560px) {
         grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: 3.5em 1.5em 1fr;
+        grid-template-rows: repeat(2, auto) 1fr;
         padding: 0;
         padding-bottom: 1em;
     };
@@ -306,10 +311,17 @@ const Span = styled.span`
     };
 
     @media only screen and (max-width: 560px) {
+        margin: 0;
+        padding-left: 0;
+        padding-right: 0.5em;
+        padding-top: 0.75em;
+        border-top: 0.75em solid #2a3035;
         grid-row: 2;
 
         :nth-of-type(1) {
             grid-column: 1;
+            padding-left: 0.5em;
+            padding-right: 0;
         };
     };
 
@@ -324,10 +336,23 @@ const ImageContainer = styled.div`
 
     @media only screen and (max-width: 560px) {
         grid-row: 3;
+        margin-left: 1em;
+        margin-right: 0.5em;
+
+        &:nth-of-type(2) {
+            margin-left: 0.5em;
+            margin-right: 1em;
+        };
     };
 
     @media only screen and (max-width: 414px) {
-        margin: 0 1.25em;
+        margin-left: 1.25em;
+        margin-right: 0.5em;
+
+        &:nth-of-type(2) {
+            margin-left: 0.5em;
+            margin-right: 1.25em;
+        };
     };
 `;
 
@@ -354,7 +379,7 @@ const SlideButton = styled.button`
     width: 1em;
     grid-row: 2;
 
-    &:hover {
+    &:hover, &:focus {
         opacity: 0.8;
     };
 
@@ -365,7 +390,6 @@ const SlideButton = styled.button`
     @media only screen and (max-width: 560px) {
         width: 100%;
         height: 1.5em;
-        margin-bottom: 0.5em;
         grid-row: 1;
     };
 `;

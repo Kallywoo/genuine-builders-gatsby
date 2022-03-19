@@ -88,7 +88,7 @@ const MainContent = styled.div`
         margin: 0;
         border-radius: 0;
         box-shadow: none;
-        padding: 0em;
+        /* padding: 0em; */
     };
 `;
 

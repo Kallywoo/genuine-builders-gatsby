@@ -169,7 +169,14 @@ const Header = styled.h3`
     @media only screen and (max-width: 414px) {
         margin-top: 0;
         padding-top: 1em;
+        padding-bottom: 0.5em;
+        border-bottom: 2px solid;
+        margin-bottom: 0.75em;
         font-size: x-large;
+
+        &:last-child {
+            font-size: 1em;
+        };
     };
 `;
 
@@ -184,8 +191,9 @@ const LiabilityLink = styled(Link)`
     text-decoration: none;
 
     @media only screen and (max-width: 414px) {
-        padding: 1em;
-        font-size: x-large;
+        padding: 0.85em;
+        font-size: 1.25em;
+        border: 1px solid white;
     };
 `;
 

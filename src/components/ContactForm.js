@@ -216,10 +216,6 @@ const Input = styled.input`
         margin-top: 0.5em;
         font-size: large;
     };
-
-    @media only screen and (max-width: 414px) {
-        font-size: x-large;
-    };
 `;
 
 const TextArea = styled.textarea`
@@ -250,10 +246,6 @@ const TextArea = styled.textarea`
         margin-left: 0;
         margin-top: 0.5em;
         font-size: large;
-    };
-
-    @media only screen and (max-width: 414px) {
-        font-size: x-large;
     };
 `;
 
@@ -293,7 +285,6 @@ const Button = styled.button`
     };
 
     @media only screen and (max-width: 414px) {
-        font-size: x-large;
         margin-top: 1em;
         margin-left: 1em;
         margin-right: 1em;

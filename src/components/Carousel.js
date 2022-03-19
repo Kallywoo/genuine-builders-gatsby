@@ -223,8 +223,8 @@ const CarouselContainer = styled.div`
 
     @media only screen and (max-width: 414px) {
         margin-top: 0;
-        /* margin-left: 1em; */
-        /* margin-right: 1em; */
+        padding: 1em;
+        padding-bottom: 0;
     };
 `;
 
@@ -234,6 +234,11 @@ const ImageContainer = styled.div`
     overflow: hidden;
     display: flex;
     flex-wrap: wrap;
+
+    @media only screen and (max-width: 560px) {
+        border: 1px solid black;
+        box-shadow: 0px 0px 0px 1px darkgray;
+    };
 `;
 
 const SlideButton = styled.button`
@@ -271,9 +276,19 @@ const SlideButton = styled.button`
     @media only screen and (max-width: 560px) {
         position: static;
         border-radius: 0;
-        border: 1px solid #ffffff;
+        border: none;
+        border-top: 1px solid darkgray;
+        border-left: ${props => props.right ? "1px solid darkgray" : "none"};
         order: 1;
         width: 50%;
+        opacity: 1;
+        background-color: #26292c;
+        color: #94979a;
+
+        &:hover, &:focus {
+            background-color: #232324;
+            color: #e9eaea;
+        };
     };
 `;
 
@@ -352,6 +367,7 @@ const Indexes = styled.ol`
         width: max-content;
         height: min-content;
         margin: 0 auto;
+        display: none;
     };
 
     @media only screen and (max-width: 414px) {

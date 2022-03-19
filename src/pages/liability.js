@@ -19,7 +19,7 @@ export const data = graphql`
 export default function Liability({ data }) {
 
     const { altTag } = data.contentfulImageWithMetadata;
-    const { certificate } = data.contentfulImageWithMetadata.image.gatsbyImageData;
+    const certificate = data.contentfulImageWithMetadata.image.gatsbyImageData;
 
     return (
         <>
@@ -42,7 +42,8 @@ const StyledMain = styled.main`
 
     @media only screen and (max-width: 414px) {
         margin: 0;
-        padding: 0;
+        padding: 1em;
+        border-radius: 0;
     };
 `;
 
