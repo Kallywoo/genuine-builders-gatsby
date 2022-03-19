@@ -1,6 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
 import { graphql } from 'gatsby';
+import { GatsbyImage } from "gatsby-plugin-image";
+import styled from 'styled-components';
+
 import SEO from '../components/SEO';
 
 export const data = graphql`
@@ -8,9 +10,7 @@ export const data = graphql`
         contentfulImageWithMetadata(contentful_id: {eq: "62ZgrpCnE57LyNe57rkZTD"}) {
             altTag
             image {
-                fluid {
-                    src
-                }
+                gatsbyImageData(placeholder: BLURRED)
             }
         }
     }
@@ -19,13 +19,13 @@ export const data = graphql`
 export default function Liability({ data }) {
 
     const { altTag } = data.contentfulImageWithMetadata;
-    const { src: certificate } = data.contentfulImageWithMetadata.image.fluid;
+    const certificate = data.contentfulImageWithMetadata.image.gatsbyImageData;
 
     return (
         <>
-            <SEO title="Liability Insurance Certificate"/>
+            <SEO title="Liability Insurance Certificate" />
             <StyledMain>
-                <Image src={certificate} alt={altTag}/>
+                <Image image={certificate} alt={altTag} />
             </StyledMain>
         </>
     );
@@ -39,8 +39,14 @@ const StyledMain = styled.main`
     border-radius: 10px;
     box-shadow: 5px 5px 5px #333333;
     text-align: center;
+
+    @media only screen and (max-width: 414px) {
+        margin: 0;
+        padding: 1em;
+        border-radius: 0;
+    };
 `;
 
-const Image = styled.img`
+const Image = styled(GatsbyImage)`
     width: auto;
 `;
