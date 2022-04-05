@@ -8,6 +8,8 @@ import styled from 'styled-components';
 import { Catalogue } from '../components/Catalogue';
 import SEO from '../components/SEO';
 
+import screw from '../images/screw.png';
+
 export const data = graphql`
     query {
         contentfulParagraphRichWithHeader(contentful_id: {eq: "5px2a2HELBVYGlrhZWtE1g"}) {
