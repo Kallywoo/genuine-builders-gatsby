@@ -2,7 +2,7 @@
 
 import { graphql, useStaticQuery } from 'gatsby';
 import React, { useEffect, useReducer, useRef } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { useSwipeable } from 'react-swipeable';
 
 import { reducer } from './CarouselReducer';
@@ -12,8 +12,10 @@ import placeholder from '../images/about-image.png';
 export const Carousel = ({ duration = 5000 }) => {
 
     useEffect(() => {
-        if (duration < 899) {
-            console.warn(`Carousel duration (${duration}) is too fast!! Minimum value allowed is 900.`);
+        if (process.env.NODE_ENV === "development") {
+            if (duration < 899) {
+                console.warn(`Carousel duration (${duration}) is too fast!! Minimum value allowed is 900.`);
+            };
         };
     }, [duration]);
 
@@ -173,14 +175,12 @@ export const Carousel = ({ duration = 5000 }) => {
                     </>
                 }
                 <div {...handlers}>
-                    {state.sliding && state.direction === "left" &&
-                        <LastImage 
-                            src={images[state.previous]?.file?.url} 
-                            alt="Genuine Builders York" 
-                            sliding={state.sliding ? true : false}
-                            swiped={state.swiped ? true : false}
-                        />
-                    }
+                    <LastImage 
+                        src={images[state.previous]?.file?.url} 
+                        alt="Genuine Builders York" 
+                        sliding={state.sliding && state.direction === "left" ? true : false}
+                        swiped={state.swiped ? true : false}
+                    />
                     <CurrentImage 
                         src={isImages ? images[state.current]?.file?.url : images[0]} 
                         alt="Genuine Builders York"
@@ -190,14 +190,12 @@ export const Carousel = ({ duration = 5000 }) => {
                         width="716"
                         height="348"
                     />
-                    {state.sliding && state.direction === "right" &&
-                        <NextImage 
-                            src={images[state.next]?.file?.url} 
-                            alt="Genuine Builders York"
-                            sliding={state.sliding ? true : false}
-                            swiped={state.swiped ? true : false}
-                        />
-                    }
+                    <NextImage 
+                        src={images[state.next]?.file?.url} 
+                        alt="Genuine Builders York"
+                        sliding={state.sliding && state.direction === "right" ? true : false}
+                        swiped={state.swiped ? true : false}
+                    />
                 </div>
                 {isImages &&
                     <Indexes>
@@ -296,11 +294,13 @@ const LastImage = styled.img`
     position: absolute;
     width: 100%;
     top: 0;
+    left: -100%;
     z-index: 1;
-    animation-name: ${props => props.sliding ? css`${LastSlide}` : ""};
-    animation-duration: ${props => props.swiped ? "0.4s" : "0.8s"};
-    animation-iteration-count: 1;
-    animation-timing-function: ease-out;
+    animation: 
+    /* name: */ ${props => props.sliding ? LastSlide : null}
+    /* duration: */ ${props => props.swiped ? "0.4s" : "0.8s"}
+    /* easing: */ ease-out
+    /* direction: */ forwards;
 `;
 
 const CurrentImage = styled.img`
@@ -308,20 +308,23 @@ const CurrentImage = styled.img`
     height: auto;
     max-width: 100%;
     position: relative;
-    animation-name: ${props => props.sliding ? css`${CurrentSlide(props.$direction)}` : ""};
-    animation-duration: ${props => props.swiped ? "0.4s" : "0.8s"};
-    animation-iteration-count: 1;
-    animation-timing-function: ease-out;
+    animation: 
+    /* name: */ ${props => props.sliding ? CurrentSlide(props.$direction) : null}
+    /* duration: */ ${props => props.swiped ? "0.4s" : "0.8s"}
+    /* easing: */ ease-out
+    /* direction: */ forwards;
 `;
 
 const NextImage = styled.img`
     position: absolute;
     width: 100%;
     top: 0;
-    animation-name: ${props => props.sliding ? css`${NextSlide}` : ""};
-    animation-duration: ${props => props.swiped ? "0.4s" : "0.8s"};
-    animation-iteration-count: 1;
-    animation-timing-function: ease-out;
+    left: 100%;
+    animation: 
+    /* name: */ ${props => props.sliding ? NextSlide : null}
+    /* duration: */ ${props => props.swiped ? "0.4s" : "0.8s"}
+    /* easing: */ ease-out
+    /* direction: */ forwards;
 `;
 
 const LastSlide = keyframes`

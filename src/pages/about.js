@@ -5,16 +5,13 @@ import { renderRichText } from 'gatsby-source-contentful/rich-text';
 import { BLOCKS } from '@contentful/rich-text-types';
 import styled from 'styled-components';
 
+import { Catalogue } from '../components/Catalogue';
 import SEO from '../components/SEO';
 
 import screw from '../images/screw.png';
 
 export const data = graphql`
     query {
-        contentfulArticleHeader {
-            id
-            list
-        }
         contentfulParagraphRichWithHeader(contentful_id: {eq: "5px2a2HELBVYGlrhZWtE1g"}) {
             aboutHeader: header
             aboutParagraph: paragraph {
@@ -45,7 +42,6 @@ export const data = graphql`
 
 export default function About({ data }) {
 
-    const { list } = data.contentfulArticleHeader;
     const { aboutHeader, aboutParagraph } = data.contentfulParagraphRichWithHeader;
     const { nodes: values } = data.allContentfulValue;
     const { signoff } = data;
@@ -62,20 +58,20 @@ export default function About({ data }) {
             <SEO title="About Us" />
             <StyledMain>
                 <MainContent>
-                    <List aria-hidden="true">
-                        {list.map((item, i) => 
-                            <ListItem key={`${list.id}-${i}`}>{item}</ListItem>
-                        )}
-                    </List>
+                    <Catalogue />
                     <Header>{aboutHeader}</Header>
                     {aboutParagraph && renderRichText(aboutParagraph)}
-                    <StaticImage src='../images/about-image.png' alt="Genuine Builders York vehicles" placeholder="blurred" />
+                    <ImageContainer>
+                        <StaticImage src='../images/about-image.png' alt="Genuine Builders York vehicles" placeholder="blurred" />
+                    </ImageContainer>
                     <Header>Our Values</Header>
                     {values.map(value => 
                         <p key={value.id}><Category>{value.value}:</Category> {value.description.description}</p>
                     )}
                     <LiabilityLink to="/liability">Click here to view our liability insurance certificate</LiabilityLink>
-                    <StaticImage src='../images/about-image.png' alt="Genuine Builders York vehicles" placeholder="blurred" />
+                    <ImageContainer>
+                        <StaticImage src='../images/about-image.png' alt="Genuine Builders York vehicles" placeholder="blurred" />
+                    </ImageContainer>
                     {signoff && 
                         <Summary>
                             <Header>'{signoff.title}'</Header>
@@ -106,12 +102,6 @@ const MainContent = styled.div`
     border-radius: 10px;
     box-shadow: 5px 5px 5px #333333;
 
-    img {
-        width: 100%;
-        margin: 1em 0em;
-        height: auto;
-    };
-
     @media only screen and (max-width: 560px) {
         padding: 1em;
     };
@@ -121,45 +111,6 @@ const MainContent = styled.div`
         border-radius: 0;
         box-shadow: none;
         padding: 0em 1em;
-    };
-`;
-
-const List = styled.ul`
-    list-style-type: none;
-    margin: 0 auto;
-    margin-bottom: 1em;
-    padding: 0;
-    max-width: 395px;
-    text-align: center;
-
-    @media only screen and (max-width: 768px) {
-        display: none;
-    };
-`;
-
-const ListItem = styled.li`
-    display: inline;
-    color: #a0df6d;
-    font-size: small;
-    white-space: nowrap;
-
-    &:before {
-        margin: 1ex;
-        content: url(${screw});
-    };
-
-    &:nth-child(odd) {
-        color: #52af07;
-    };
-
-    &:nth-child(3):after {
-        margin: 1ex;
-        content: url(${screw});
-    };
-
-    &:nth-child(5):after {
-        margin: 1ex;
-        content: url(${screw});
     };
 `;
 
@@ -173,11 +124,13 @@ const Header = styled.h3`
         border-bottom: 2px solid;
         margin-bottom: 0.75em;
         font-size: x-large;
-
-        &:last-child {
-            font-size: 1em;
-        };
     };
+`;
+
+const ImageContainer = styled.div`
+    width: 100%;
+    margin: 1em 0em;
+    height: auto;
 `;
 
 const Category = styled.span`

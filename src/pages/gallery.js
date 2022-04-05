@@ -3,17 +3,12 @@ import { GatsbyImage } from 'gatsby-plugin-image';
 import { graphql } from 'gatsby';
 import styled from 'styled-components';
 
+import { Catalogue } from '../components/Catalogue';
 import { Modal } from "../components/Modal";
 import SEO from '../components/SEO';
 
-import screw from '../images/screw.png';
-
 export const data = graphql`
     query {
-        contentfulArticleHeader {
-            id
-            list
-        }
         contentfulImageGallery {
             images: projects {
                 id
@@ -34,7 +29,6 @@ export const data = graphql`
 
 export default function Gallery({ data }) {
 
-    const { list } = data.contentfulArticleHeader;
     const { images } = data.contentfulImageGallery;
 
     const [masterArray, setMasterArray] = useState([]);
@@ -108,11 +102,7 @@ export default function Gallery({ data }) {
             <SEO title="Gallery" />
             <StyledMain>
                 <MainContent>
-                    <List aria-hidden="true">
-                        {list.map((item, i) => 
-                            <ListItem key={`${list.id}-${i}`}>{item}</ListItem>
-                        )}
-                    </List>
+                    <Catalogue />
                     {active &&
                         <Comparisons ref={containerRef} tabIndex={-1}>
                             <SlideButton onClick={() => ChangeComparisons("left")} aria-label="Click to see Previous Comparisons">‹</SlideButton>
@@ -212,45 +202,6 @@ const MainContent = styled.div`
         border-radius: 0;
         box-shadow: none;
         padding: 0em;
-    };
-`;
-
-const List = styled.ul`
-    list-style-type: none;
-    margin: 0 auto;
-    margin-bottom: 1em;
-    padding: 0;
-    max-width: 395px;
-    text-align: center;
-
-    @media only screen and (max-width: 768px) {
-        display: none;
-    };
-`;
-
-const ListItem = styled.li`
-    display: inline;
-    color: #a0df6d;
-    font-size: small;
-    white-space: nowrap;
-
-    &:before {
-        margin: 1ex;
-        content: url(${screw});
-    };
-
-    &:nth-child(odd) {
-        color: #52af07;
-    };
-
-    &:nth-child(3):after {
-        margin: 1ex;
-        content: url(${screw});
-    };
-
-    &:nth-child(5):after {
-        margin: 1ex;
-        content: url(${screw});
     };
 `;
 
