@@ -39,7 +39,7 @@ export const Header = ({ props }) => {
                             <Logo image={logoImage} alt="Genuine Builders Limited" />
                         </Link>
                     </ImageHeader>
-                    <ContactContainer>
+                    <ContactContainer mobileVisible={!pathname.includes("/contact") ? true : false}>
                         <ContactHeader>{description}</ContactHeader>
                         <InnerFlexBox>
                             <ContactInformation />
@@ -139,6 +139,7 @@ const ImageHeader = styled.h1`
 
     @media only screen and (max-width: 414px) {
         text-align: center;
+        padding-bottom: 0.75em;
     };
 `;
 
@@ -159,6 +160,11 @@ const ContactContainer = styled.div`
 
     @media only screen and (max-width: 560px) {
         margin: 1em 0em;
+    };
+
+    @media only screen and (max-width: 414px) {
+        display: ${props => !props.mobileVisible ? "none" : "inline-block"};
+        margin-top: 0.25em;
     };
 `;
 

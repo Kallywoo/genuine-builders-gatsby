@@ -100,7 +100,7 @@ const ContactInfo = styled.address`
     };
 
     @media only screen and (max-width: 414px) {
-        display: none;
+        padding-bottom: 2em;
     };
 `;
 
