@@ -101,11 +101,13 @@ const Name = styled.p`
     };
 `;
 
+/*
 const NameSpan = styled.span`
     @media only screen and (max-width: 560px) {
         display: none;
     };
 `;
+*/
 
 const Number = styled.a`
     white-space: nowrap;
