@@ -1,7 +1,7 @@
 name: deploy-app-on-s3
 on:
   pull_request:
-    branches: [dev]
+    branches: [main]
     types: [closed]
 jobs:
   deploy:
@@ -25,6 +25,8 @@ jobs:
           touch .env
           echo CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }} >> .env.production
           echo CONTENTFUL_ACCESS_TOKEN=${{ secrets.CONTENTFUL_ACCESS_TOKEN }} >> .env.production
+          echo API_ENDPOINT=${{ secrets.API_ENDPOINT }} >> .env.production
+          echo SES_RECIPIENT=${{ secrets.SES_RECIPIENT }} >> .env.production
       - name: Build Application
         run: yarn build
       - uses: jakejarvis/s3-sync-action@master
