@@ -1,44 +1,47 @@
 import React from 'react';
+import { GatsbyImage } from 'gatsby-plugin-image';
 import { Link, useStaticQuery, graphql } from 'gatsby';
 import styled from 'styled-components';
 
 import { ContactInformation } from './ContactInformation';
 
-import background from '../images/temp/headerBackground.png';
-import logo from '../images/temp/logo.png';
-import federation from '../images/temp/federation.svg';
+import background from '../images/background-header.png';
+import federation from '../images/federation-logo.svg';
 
 export const Footer = () => {
 
     const data = useStaticQuery(graphql`
         query { 
-            allContentfulContact {
-                contacts: nodes {
-                    id
-                    name
-                    number
-                    email
-                    listOrder
+            contentfulHeader {
+                logo {
+                    gatsbyImageData(placeholder: BLURRED)
                 }
             }
         }
     `);
 
-    const { contacts } = data.allContentfulContact;
-    contacts.sort((a, b) => a.listOrder - b.listOrder);
+    const { gatsbyImageData: logo } = data.contentfulHeader.logo;
 
     return (
         <StyledFooter>
             <LeftSideContent>
                 <LogoContainer>
-                    <Logo src={logo} alt="" />
+                    <Logo image={logo} alt="Genuine Builders Limited" />
                 </LogoContainer>
                 <Navigation>
                     <List>
-                        <ListItem><StyledLink to="/">Home</StyledLink></ListItem>
-                        <ListItem><StyledLink to="/about">About Us</StyledLink></ListItem>
-                        <ListItem><StyledLink to="/gallery">Gallery</StyledLink></ListItem>
-                        <ListItem><StyledLink to="/contact">Contact</StyledLink></ListItem>
+                        <ListItem>
+                            <StyledLink to="/">Home</StyledLink>
+                        </ListItem>
+                        <ListItem>
+                            <StyledLink to="/about">About Us</StyledLink>
+                        </ListItem>
+                        <ListItem>
+                            <StyledLink to="/gallery">Gallery</StyledLink>
+                        </ListItem>
+                        <ListItem>
+                            <StyledLink to="/contact">Contact</StyledLink>
+                        </ListItem>
                     </List>
                 </Navigation>
             </LeftSideContent>
@@ -47,14 +50,14 @@ export const Footer = () => {
                     <ContactInformation />
                 </ContactContainer>
                 <CompanyInfo>
-                    <CompanyNumber>Company Number: 6286458</CompanyNumber>
+                    <CompanyNumber>Company Number: <Split>6286458</Split></CompanyNumber>
                     <a href="https://www.fmb.org.uk/builder/genuine-builders-ltd.html">
-                        <Image src={federation} alt="Federation of Master Builders" />
+                        <Image src={federation} alt="Federation of Master Builders" width="60" height="94" />
                     </a>
                 </CompanyInfo>
             </RightSideContent>
         </StyledFooter>
-    )
+    );
 };
 
 const StyledFooter = styled.footer`
@@ -64,6 +67,10 @@ const StyledFooter = styled.footer`
     padding: 2em;
     display: flex;
     justify-content: space-between;
+
+    @media only screen and (max-width: 414px) {
+        border-top: 15px solid #1f2327;
+    };
 `;
 
 const LeftSideContent = styled.div`
@@ -74,15 +81,17 @@ const LogoContainer = styled.div`
     display: inline-block;
     width: auto;
     margin-right: 4em;
+
     @media only screen and (max-width: 768px) {
         display: none;
-    }
+    };
 `;
 
-const Logo = styled.img`
+const Logo = styled(GatsbyImage)`
     display: block;
     width: 100%;
     max-width: 330px;
+    height: auto;
 `;
 
 const Navigation = styled.nav`
@@ -98,9 +107,10 @@ const List = styled.ul`
 const ListItem = styled.li`
     margin-top: 1em;
     white-space: nowrap;
+
     &:nth-child(1) {
         margin-top: 0em;
-    }
+    };
 `;
 
 const StyledLink = styled(Link)`
@@ -113,20 +123,22 @@ const RightSideContent = styled.div`
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-end;
+
     @media only screen and (max-width: 768px) {
         justify-content: center;
-    }
+    };
 `;
 
-const ContactContainer = styled.div`
+const ContactContainer = styled.address`
     display: flex;
     text-align: center;
     color: #a0df6d;
     margin-left: 2em;
     margin-bottom: 1em;
+
     @media only screen and (max-width: 768px) {
         display: none;
-    }
+    };
 `;
 
 const CompanyInfo = styled.div`
@@ -137,6 +149,16 @@ const CompanyInfo = styled.div`
 const CompanyNumber = styled.p`
     color: white;
     margin-right: 1em;
+
+    @media only screen and (max-width: 560px) {
+        text-align: right;
+    };
+`;
+
+const Split = styled.span`
+    @media only screen and (max-width: 560px) {
+        display: block;
+    };
 `;
 
 const Image = styled.img`

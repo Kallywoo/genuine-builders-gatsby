@@ -16,13 +16,6 @@ module.exports = {
         spaceId: process.env.CONTENTFUL_SPACE_ID,
       },
     },
-    {
-      resolve: `gatsby-plugin-portal`,
-      options: {
-        key: 'portal',
-        id: 'portal',
-      },
-    },
     "gatsby-plugin-styled-components",
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",

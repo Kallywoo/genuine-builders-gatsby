@@ -1,184 +1,215 @@
-// can probably just replace this all with some plug-in instead
+// can probably just replace this all with some plug-in instead??
 
 import { graphql, useStaticQuery } from 'gatsby';
-import React, { useState, useEffect, useRef } from 'react';
-import styled, { css, keyframes } from 'styled-components';
-import { GatsbyImage } from 'gatsby-plugin-image';
+import React, { useEffect, useReducer, useRef } from 'react';
+import styled, { keyframes } from 'styled-components';
 import { useSwipeable } from 'react-swipeable';
 
-export const Carousel = props => {
+import { reducer } from './CarouselReducer';
+
+import placeholder from '../images/about-image.png';
+
+export const Carousel = ({ duration = 5000 }) => {
+
+    useEffect(() => {
+        if (process.env.NODE_ENV === "development") {
+            if (duration < 899) {
+                console.warn(`Carousel duration (${duration}) is too fast!! Minimum value allowed is 900.`);
+            };
+        };
+    }, [duration]);
 
     const data = useStaticQuery(graphql`
         query {
             contentfulImageCarousel {
                 images {
                     id
-                    gatsbyImageData(placeholder: BLURRED)
+                    file {
+                        url
+                    }
                 }
             }
         }
     `);
 
-    const { images } = data.contentfulImageCarousel;
+    const images = data.contentfulImageCarousel.images || [placeholder];
 
-    const [slide, setSlide] = useState(false);
-    const [direction, setDirection] = useState("right");
-    const [duration, setDuration] = useState(props.duration);
+    const isImages = images.length > 1;
 
-    const [lastIndex, setLastIndex] = useState(images.length - 1);
-    const [index, setIndex] = useState(0);
-    const [nextIndex, setNextIndex] = useState(1);
-    
-    const [isMounted, setIsMounted] = useState(false);
-    const [isHovering, setIsHovering] = useState(false);
-    const [forcing, setForcing] = useState(false);
-    const [isSwitched, setIsSwitched] = useState(false);
+    const initialState = {
+        active: isImages ? true : false,
+        sliding: false,
+        direction: "right",
+        previous: images.length - 1,
+        current: 0,
+        next: 1,
+        switched: false,
+        swiped: false,
+        duration: duration > 899 ? duration : 900
+    };
+
+    const [state, dispatch] = useReducer(reducer, initialState);
 
     const newIndex = useRef(0);
+    const timer = useRef();
+    const timer2 = useRef();
 
     const handlers = useSwipeable({
-        onSwipedLeft: () => forceSlides("right"),
-        onSwipedRight: () => forceSlides("left"),
+        onSwipedLeft: () => forceDirection("FORCE_SWIPE", "right"),
+        onSwipedRight: () => forceDirection("FORCE_SWIPE", "left"),
         preventDefaultTouchmoveEvent: true,
         trackMouse: false
     });
 
     useEffect(() => {
-        setIsMounted(true);
 
-        return () => setIsMounted(false);
-    }, []);
+        const calculateDirection = (i) => {
+            const maxLength = images.length - 1;
 
-    useEffect(() => {
-            
-        let timeout = () => {};
-
-        if (isMounted) {
-            if (!isHovering || forcing) {
-                
-                // while carousel is idle, wait for given duration
-                timeout = setTimeout(() => {
-                    setDuration(props.duration);
-
-                    setSlide(true); // slides
-
-                    // wait time for it to have done sliding, then swap properties
-                    setTimeout(() => {
-                        setSlide(false); // stops slide
-
-                        if (direction === "right") {
-                            // do these images have one after their position to jump to? if not then reset to beginning
-
-                            (lastIndex !== images.length - 1) ? setLastIndex(lastIndex + 1) : setLastIndex(0);
-
-                            if(!isSwitched) { // has user NOT forced the current image to a new position via index buttons?
-                                (index !== images.length - 1) ? setIndex(index + 1) : setIndex(0);
-                            } else {
-                                setIndex(newIndex.current);
-                                setIsSwitched(false);
-                            };
-
-                            (nextIndex !== images.length - 1) ? setNextIndex(nextIndex + 1) : setNextIndex(0);
-
-                        } else {
-                            // do these images (going left) have one before their position to jump to? if not then reset to end
-
-                            (lastIndex !== 0) ? setLastIndex(lastIndex - 1) : setLastIndex(images.length - 1);
-
-                            if(!isSwitched) { // has user NOT forced the current image to a new position via index buttons?
-                                (index !== 0) ? setIndex(index - 1) : setIndex(images.length - 1);
-                            } else {
-                                setIndex(newIndex.current);
-                                setIsSwitched(false);
-                            };
-
-                            (nextIndex !== 0) ? setNextIndex(nextIndex - 1) : setNextIndex(images.length - 1);
-
-                            setDirection("right"); // reset direction after being forced left
-                        };
-
-                    }, 1000); 
-
-                }, duration);
-
-            } else {
-                clearTimeout(timeout);
+            if (state.direction === "right") { // do these images have one after their position to jump to? if not then reset to beginning
+                return i !== maxLength ? ++i : 0;
+            } else { // do these images (going left) have one before their position to jump to? if not then reset to end
+                return i !== 0 ? --i : maxLength;
             };
         };
-        
-        return () => clearTimeout(timeout);
-        
-    }, [isMounted, isHovering, forcing, duration, props.duration, direction, lastIndex, index, nextIndex, images.length, isSwitched]);
 
-    const forceSlides = (direction) => {
-        if (slide === false) { // prevents spam of button
-            setForcing(true);
-            setTimeout(() => setForcing(false), 1000);
-            setDuration(0);
-            setDirection(direction);
+        if (state.active) {
+            timer.current = setTimeout(() => { // while carousel is idle, wait for given duration
+
+                dispatch({ // set sliding to true (stops spam when forcing) and resets duration length
+                    type: "INITIATE", 
+                    payload: {duration: initialState.duration} 
+                });
+
+                timer2.current = setTimeout(() => { // wait time for it to have done sliding, then swap properties
+
+                    const previous = calculateDirection(state.previous);
+                    const current = state.switched ? newIndex.current : calculateDirection(state.current);
+                    const next = calculateDirection(state.next);
+
+                    dispatch({
+                        type: "CHANGE_SLIDES",
+                        payload: {
+                            previous,
+                            current,
+                            next,
+                        }
+                    });
+
+                }, state.swiped ? 450 : 850); 
+            }, state.duration);
+
+        } else {
+            clearTimeout(timer.current);
+        };
+        
+        return () => {
+            clearTimeout(timer.current);
+            // console.log("cleared");
+        };
+        
+    }, [images.length, initialState.duration, state]);
+
+    useEffect(() => {
+        return () => clearTimeout(timer2.current); // clear timeout only on dismount, rather than every state change (which breaks carousel)
+    }, []);
+
+    const forceDirection = (type, direction) => {
+        if (!state.sliding && isImages) {
+
+            dispatch({
+                type: type,
+                payload: {direction}
+            });
+
         };
     };
 
     const slideToIndex = (e) => {
-        if (slide === false) { // prevents awkward switch if you hit a direction button
-            // grab index from searching id in images array
-            newIndex.current = images.findIndex((image) => image.id === e.target.id);
+        if (!state.sliding) {
 
-            if (index !== newIndex.current) {
-                setIsSwitched(true);
-                if (newIndex.current <= index) {
-                    setLastIndex(newIndex.current);
-                    setNextIndex(newIndex.current + 2); // on left, nextIndex is made nextIndex-1, so newIndex+1 in this case would just be equal to index, hence +2
-                    forceSlides("left");
+            newIndex.current = images.findIndex((image) => image.id === e.target.id); // get index of selected in images array
+            
+            if (state.current !== newIndex.current) {
+                if (newIndex.current <= state.current) {
+
+                    dispatch({
+                        type: "FORCE_TO_INDEX",
+                        payload: {
+                            previous: newIndex.current,
+                            next: newIndex.current + 2,
+                            direction: "left"
+                        }
+                    });
+
                 } else {
-                    setNextIndex(newIndex.current);
-                    setLastIndex(newIndex.current - 2); // same as comment above, except flipped direction/equation
-                    forceSlides("right");
+
+                    dispatch({
+                        type: "FORCE_TO_INDEX",
+                        payload: {
+                            previous: newIndex.current - 2,
+                            next: newIndex.current,
+                            direction: "right"
+                        }
+                    });
+                
                 };
             };
         };
     };
 
     return (
-        <CarouselContainer onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
+        <CarouselContainer 
+            onMouseEnter={() => {
+                return isImages ? dispatch({ type: "SET_ACTIVE", payload: {active: false} }) : null;
+            }} 
+            onMouseLeave={() => {
+                return isImages ? dispatch({ type: "SET_ACTIVE", payload: {active: true} }) : null;
+            }}
+        >
             <ImageContainer>
-                <SlideButton onClick={() => forceSlides("left")} aria-label="Previous Image">‹</SlideButton>
-                <SlideButton onClick={() => forceSlides("right")} right aria-label="Next Image">›</SlideButton>
+                {isImages &&
+                    <>
+                        <SlideButton onClick={() => forceDirection("FORCE_SLIDES", "left")} aria-label="Previous Image">‹</SlideButton>
+                        <SlideButton onClick={() => forceDirection("FORCE_SLIDES", "right")} aria-label="Next Image" right>›</SlideButton>
+                    </>
+                }
                 <div {...handlers}>
-                    {slide && direction === "left" &&
-                        <LastImage sliding={slide ? true : false}> 
-                            <GatsbyImage
-                                image={images[lastIndex].gatsbyImageData} 
-                                alt="Genuine Builders York" 
-                            />
-                        </LastImage>
-                    }
-                    <CurrentImage sliding={slide ? true : false} direction={direction}> 
-                        <GatsbyImage
-                            image={images[index].gatsbyImageData} 
-                            alt="Genuine Builders York"
-                            loading="eager"
-                        />
-                    </CurrentImage>
-                    {slide && direction === "right" &&
-                        <NextImage sliding={slide ? true : false}>
-                            <GatsbyImage
-                                image={images[nextIndex].gatsbyImageData} 
-                                alt="Genuine Builders York"
-                            />
-                        </NextImage>
-                    }
+                    <LastImage 
+                        src={images[state.previous]?.file?.url} 
+                        alt="Genuine Builders York" 
+                        sliding={state.sliding && state.direction === "left" ? true : false}
+                        swiped={state.swiped ? true : false}
+                    />
+                    <CurrentImage 
+                        src={isImages ? images[state.current]?.file?.url : images[0]} 
+                        alt="Genuine Builders York"
+                        sliding={state.sliding ? true : false}
+                        swiped={state.swiped ? true : false} 
+                        $direction={state.direction}
+                        width="716"
+                        height="348"
+                    />
+                    <NextImage 
+                        src={images[state.next]?.file?.url} 
+                        alt="Genuine Builders York"
+                        sliding={state.sliding && state.direction === "right" ? true : false}
+                        swiped={state.swiped ? true : false}
+                    />
                 </div>
-                <Indexes>
-                    {images.map((image, i) => 
-                        <Index highlight={index + 1} active={slide ? true : false} key={image.id}>
-                            <IndexButton 
-                                id={image.id} 
-                                onClick={(e) => slideToIndex(e)} 
-                                aria-label={i + 1 === index + 1 ? `Current Image` : `Skip to Image ${i + 1}`}
-                            />
-                        </Index>)}
-                </Indexes>
+                {isImages &&
+                    <Indexes>
+                        {images.map((image, i) => 
+                            <Index highlight={state.current + 1} active={state.sliding ? true : false} key={image.id}>
+                                <IndexButton 
+                                    id={image.id} 
+                                    onClick={(e) => slideToIndex(e)}
+                                    aria-label={i + 1 === state.current + 1 ? `Current Image` : `Skip to Image ${i + 1}`}
+                                />
+                            </Index>
+                        )}
+                    </Indexes>
+                }
             </ImageContainer>
         </CarouselContainer>
     );
@@ -187,84 +218,113 @@ export const Carousel = props => {
 const CarouselContainer = styled.div`
     margin: 1em auto;
     position: relative;
+
+    @media only screen and (max-width: 414px) {
+        margin-top: 0;
+        padding: 1em;
+        padding-bottom: 0;
+    };
 `;
 
 const ImageContainer = styled.div`
     position: relative;
     width: 100%;
     overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+
+    @media only screen and (max-width: 560px) {
+        border: 1px solid black;
+        box-shadow: 0px 0px 0px 1px darkgray;
+    };
 `;
 
 const SlideButton = styled.button`
-   position: absolute;
-   top: 50%;
-   ${props => props.right ? "right: 2.5%" : "left: 2.5%"};
-   z-index: 2;
-   background-color: #222222;
-   color: #ffffff;
-   border-style: none;
-   border: 3px solid #ffffff;
-   border-radius: 100%;
-   font-size: xx-large;
-   font-weight: bold;
-   opacity: 50%;
-   width: 40px;
-   height: 40px;
-   line-height: 0em;
-   padding-bottom: 5px;
-   ${props => props.right ? "padding-right: 4px" : "padding-left: 3px"};
-   cursor: pointer;
-   
-   &:hover {
-    opacity: 90%;
-   }
+    position: absolute;
+    top: 50%;
+    ${props => props.right ? "right: 2.5%" : "left: 2.5%"};
+    z-index: 2;
+    background-color: #222222;
+    color: #ffffff;
+    border-style: none;
+    border: 3px solid #ffffff;
+    border-radius: 100%;
+    font-size: xx-large;
+    font-weight: bold;
+    opacity: 50%;
+    width: 40px;
+    height: 40px;
+    line-height: 0em;
+    padding-bottom: 5px;
+    ${props => props.right ? "padding-right: 4px" : "padding-left: 3px"};
+    cursor: pointer;
+    
+    &:hover {
+        opacity: 90%;
+    };
 
-   @media only screen and (max-width: 768px) {
+    @media only screen and (max-width: 768px) {
         top: auto;
         width: 50px;
         height: 50px;
         bottom: 4.5%;
         font-size: xxx-large;
-    }
+    };
 
     @media only screen and (max-width: 560px) {
-        opacity: 0;
-        pointer-events: none;
-    }
+        position: static;
+        border-radius: 0;
+        border: none;
+        border-top: 1px solid darkgray;
+        border-left: ${props => props.right ? "1px solid darkgray" : "none"};
+        order: 1;
+        width: 50%;
+        opacity: 1;
+        background-color: #26292c;
+        color: #94979a;
+
+        &:hover, &:focus {
+            background-color: #232324;
+            color: #e9eaea;
+        };
+    };
 `;
 
-const LastImage = styled.div`
+const LastImage = styled.img`
     position: absolute;
     width: 100%;
     top: 0;
+    left: -100%;
     z-index: 1;
-    animation-name: ${props => props.sliding ? css`${LastSlide}` : ""};
-    animation-duration: 0.8s;
-    animation-iteration-count: 1;
-    animation-timing-function: ease-out;
+    animation: 
+    /* name: */ ${props => props.sliding ? LastSlide : null}
+    /* duration: */ ${props => props.swiped ? "0.4s" : "0.8s"}
+    /* easing: */ ease-out
+    /* direction: */ forwards;
 `;
 
-const CurrentImage = styled.div`
+const CurrentImage = styled.img`
     display: block;
     height: auto;
     max-width: 100%;
     position: relative;
-    animation-name: ${props => props.sliding ? css`${CurrentSlide(props.direction)}` : ""};
-    animation-duration: 0.8s;
-    animation-iteration-count: 1;
-    animation-timing-function: ease-out;
+    animation: 
+    /* name: */ ${props => props.sliding ? CurrentSlide(props.$direction) : null}
+    /* duration: */ ${props => props.swiped ? "0.4s" : "0.8s"}
+    /* easing: */ ease-out
+    /* direction: */ forwards;
 `;
 
-const NextImage = styled.div`
+const NextImage = styled.img`
     position: absolute;
     width: 100%;
     top: 0;
-    
-    animation-name: ${props => props.sliding ? css`${NextSlide}` : ""};
-    
-    animation-duration: 0.8s;
-    animation-iteration-count: 1;
-    animation-timing-function: ease-out;
+    left: 100%;
+    animation: 
+    /* name: */ ${props => props.sliding ? NextSlide : null}
+    /* duration: */ ${props => props.swiped ? "0.4s" : "0.8s"}
+    /* easing: */ ease-out
+    /* direction: */ forwards;
 `;
 
 const LastSlide = keyframes`
@@ -283,13 +343,17 @@ const NextSlide = keyframes`
 `;
 
 const Indexes = styled.ol`
-    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     list-style-type: none;
+    position: absolute;
     margin: 0;
     padding: 0;
     top: 2.5%;
     right: 2%;
     z-index: 2;
+    gap: 0.3em;
 
     @media only screen and (max-width: 768px) {
         top: auto;
@@ -298,24 +362,33 @@ const Indexes = styled.ol`
         bottom: 7.5%;
         text-align: center;
         z-index: 1;
+        gap: 1.25em;
+    };
+
+    @media only screen and (max-width: 560px) {
+        top: 5%;
+        width: max-content;
+        height: min-content;
+        margin: 0 auto;
+        display: none;
+    };
+
+    @media only screen and (max-width: 414px) {
+        position: relative;
+        padding: 1em 0em;
+        gap: 1em 2em;
+        background-color: #1f2327;
+        width: 100%;
+        order: 1;
     };
 `;
 
 const Index = styled.li`
-    display: inline-block;
-    margin-right: 0.3em;
     opacity: 25%;
+    transition: opacity 0.25s;
     
     &:nth-child(${props => props.highlight}) {
         opacity: ${props => props.active ? "25%" : "100%"};
-    };
-
-    @media only screen and (max-width: 768px) {
-        margin-right: 1.25em;
-
-        &:last-child {
-            margin-right: 0;
-        };
     };
 `;
 
@@ -328,6 +401,11 @@ const IndexButton = styled.button`
     cursor: pointer;
 
     @media only screen and (max-width: 768px) {
+        width: 20px;
+        height: 20px;
+    };
+
+    @media only screen and (max-width: 414px) {
         width: 20px;
         height: 20px;
     };
