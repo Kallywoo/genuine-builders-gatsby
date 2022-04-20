@@ -263,7 +263,7 @@ const SlideButton = styled.button`
         opacity: 90%;
     };
 
-   @media only screen and (max-width: 768px) {
+    @media only screen and (max-width: 768px) {
         top: auto;
         width: 50px;
         height: 50px;

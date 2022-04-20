@@ -30,21 +30,24 @@ export const ContactInformation = () => {
             <Grid>
                 {contacts.slice(0, 2).map(contact => 
                     <React.Fragment key={contact.id}>
-                        {contact.name ? 
-                            <Name aria-hidden="true">{contact.name}</Name>
-                        : null}
-                        {contact.number ? 
+                        {contact.name && 
+                            <Name aria-hidden="true">
+                                {contact.name.split(" ")[0]}{" "}
+                                <NameSpan>{contact.name.split(" ").slice(1)}</NameSpan>
+                            </Name>
+                        }
+                        {contact.number && 
                             <Number 
                                 href={`tel:${contact.number.replace(/\s+/g, '')}`} 
                                 aria-label={`${contact.name}'s phone number: ${contact.number}`}
                             >{contact.number}</Number> 
-                        : null}
-                        {contact.email ? 
+                        }
+                        {contact.email && 
                             <Email 
                                 href={`email:${contact.email}`} 
                                 aria-label={`${contact.name}'s email address: ${contact.email}`}
                             >{contact.email}</Email> 
-                        : null}
+                        }
                     </React.Fragment>
                 )}
             </Grid>

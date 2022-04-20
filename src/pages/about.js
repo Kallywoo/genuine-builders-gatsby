@@ -143,6 +143,10 @@ const LiabilityLink = styled(Link)`
     text-align: center;
     text-decoration: none;
 
+    &:hover {
+        text-decoration: underline;
+    };
+
     @media only screen and (max-width: 414px) {
         padding: 0.85em;
         font-size: 1.25em;

@@ -23,6 +23,12 @@ const GlobalStyle = createGlobalStyle`
         box-sizing: border-box;
     };
 
+    html {
+        @media only screen and (max-width: 560px) {
+            scroll-padding-top: 66px; // stops mobile header blocking top of targeted elements
+        };
+    };
+
     #gatsby-focus-wrapper {
         display: flex;
         flex-direction: column;
