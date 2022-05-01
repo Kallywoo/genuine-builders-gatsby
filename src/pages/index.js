@@ -9,8 +9,6 @@ import { Reviews } from '../components/Reviews';
 import { Carousel } from '../components/Carousel';
 import SEO from '../components/SEO';
 
-import screw from '../images/screw.png';
-
 // if Twitter 'Follow' button and/or Timeline is wanting to be kept
 // https://www.gatsbyjs.com/plugins/gatsby-plugin-twitter/
 

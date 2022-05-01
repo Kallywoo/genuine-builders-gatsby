@@ -40,9 +40,9 @@ export const Modal = forwardRef(({ gallery, index, length, cache }, ref) => {
     const CycleImage = (direction) => {
         setArrayIndex((i) => {
             if (direction === "left") {
-                return i === 0 ? length - 1 : arrayIndex - 1;
+                return (i === 0) ? length - 1 : arrayIndex - 1;
             } else {
-                return i === length - 1 ? 0 : arrayIndex + 1;
+                return (i === length - 1) ? 0 : arrayIndex + 1;
             };
         });
     };
@@ -112,7 +112,11 @@ export const Modal = forwardRef(({ gallery, index, length, cache }, ref) => {
                     <ModalImage {...handlers}>
                         <ModalImageContainer>
                             <Background image={gallery[arrayIndex]?.thumb} alt="" />
-                            <GatsbyImg image={gallery[arrayIndex]?.main} alt="" objectFit="contain" />
+                            <GatsbyImg 
+                                image={gallery[arrayIndex]?.main} 
+                                alt={gallery[arrayIndex]?.description || "Genuine Builders York"} 
+                                objectFit="contain" 
+                            />
                         </ModalImageContainer>
                         <ModalButton 
                             ref={moveLeft} 

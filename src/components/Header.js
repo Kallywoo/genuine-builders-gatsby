@@ -3,7 +3,7 @@ import { GatsbyImage, StaticImage } from 'gatsby-plugin-image';
 import { graphql, Link, useStaticQuery } from 'gatsby';
 import styled from 'styled-components';
 
-import background from '../images/background-header.png';
+import background from '../images/background-header.jpg';
 
 import { Navigation } from './Navigation';
 import { MobileNavigation } from './MobileNavigation';
@@ -17,7 +17,7 @@ export const Header = ({ props }) => {
         query {
             contentfulHeader {
                 logo {
-                    gatsbyImageData(placeholder: BLURRED)
+                    gatsbyImageData(placeholder: TRACED_SVG)
                 }
                 description
             }
@@ -50,7 +50,7 @@ export const Header = ({ props }) => {
             <Navigation />
             <ContactUs visible={!pathname.includes("/contact") ? true : false}>
                 <Link to="/contact">
-                    <StaticImage src='../images/contact-us-tab.png' alt="Go to Contact page" />
+                    <StaticImage src='../images/contact-us-tab.png' alt="Go to Contact page" placeholder="blurred" />
                 </Link>
             </ContactUs>
         </StyledHeader>
@@ -115,9 +115,6 @@ const FlexBox = styled.div`
 
     @media only screen and (max-width: 768px) {
         flex-flow: wrap;
-    };
-
-    @media only screen and (max-width: 414px) {
         justify-content: center;
     };
 `;
@@ -134,11 +131,10 @@ const ImageHeader = styled.h1`
     @media only screen and (max-width: 560px) {
         width: 100%;
         margin-left: 0;
-        text-align: left;
+        text-align: center;
     };
 
     @media only screen and (max-width: 414px) {
-        text-align: center;
         padding-bottom: 0.75em;
     };
 `;

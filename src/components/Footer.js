@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { ContactInformation } from './ContactInformation';
 
-import background from '../images/background-header.png';
+import background from '../images/background-header.jpg';
 import federation from '../images/federation-logo.svg';
 
 export const Footer = () => {

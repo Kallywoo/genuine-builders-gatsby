@@ -246,7 +246,7 @@ const Button = styled.button`
 
     &:hover {
         div { // target GatsbyImage
-            opacity: 0.6;
+            transform: scale(1.05);
         };
     };
 `;
@@ -315,6 +315,13 @@ const OpenModalButton = styled(Button)`
     border: 3px solid #2a3035;
     border-radius: 6px;
     margin: 0.5em;
+
+    &:hover {
+        div {
+            opacity: 0.6;
+            transform: none;
+        };
+    };
 `;
 
 const SlideButton = styled.button`
