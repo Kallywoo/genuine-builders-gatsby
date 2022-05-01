@@ -7,7 +7,7 @@ import { useSwipeable } from 'react-swipeable';
 
 import { reducer } from './CarouselReducer';
 
-import placeholder from '../images/filler-image.jpg';
+import placeholder from '../images/about-image.png';
 
 export const Carousel = ({ duration = 5000 }) => {
 
