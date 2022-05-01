@@ -15,13 +15,16 @@ export const data = graphql`
                 before {
                     id
                     main: gatsbyImageData(placeholder: BLURRED)
-                    thumb: gatsbyImageData(placeholder: BLURRED, width: 212)
+                    thumb: gatsbyImageData(placeholder: BLURRED, height: 160)
+                    description
                 }
                 after {
                     id
                     main: gatsbyImageData(placeholder: BLURRED)
-                    thumb: gatsbyImageData(placeholder: BLURRED, width: 212)
+                    thumb: gatsbyImageData(placeholder: BLURRED, height: 160)
+                    description
                 }
+                galleryPreview
             }
         }
     }
@@ -32,37 +35,33 @@ export default function Gallery({ data }) {
     const { images } = data.contentfulImageGallery;
 
     const [masterArray, setMasterArray] = useState([]);
-
     const [active, setActive] = useState(false);
     const [id, setId] = useState(0);
     const [swapped, hasSwapped] = useState(false);
-
     const [cachedTab, setCachedTab] = useState(null);
 
     const arrayIndex = useRef(0);
-    
     const containerRef = useRef(null);
     const modalRef = useRef(null);
 
     useEffect(() => {
         let array = [];
     
-        for(let index in images) {
+        for (let index in images) {
     
-            for(let item in images[index].before) {
-                array.push(images[index].before[item]);
-                array.push(images[index].after[item]);
+            for (let item in images[index].before) {
+                array.push(images[index].before?.[item]);
+                array.push(images[index].after?.[item]);
             };
     
-            for(let item in images[index].after) {
+            for (let item in images[index].after) {
                 if (!array.find(element => element.id === images[index].after[item].id)) {
-                    array.push(images[index].after[item]);
+                    array.push(images[index].after?.[item]);
                 };
             };
         };
     
         setMasterArray(array);
-
     }, [images]);
 
     useEffect(() => {
@@ -83,9 +82,9 @@ export default function Gallery({ data }) {
     const ChangeComparisons = (direction) => {
         setId((id) => {
             if (direction === "left") {
-                return id !== 0 ? --id : images.length - 1;
+                return (id !== 0) ? --id : images.length - 1;
             } else {
-                return id !== images.length - 1 ? ++id : 0;
+                return (id !== images.length - 1) ? ++id : 0;
             };
         });
         hasSwapped(true);
@@ -104,59 +103,76 @@ export default function Gallery({ data }) {
                 <MainContent>
                     <Catalogue />
                     {active &&
-                        <Comparisons ref={containerRef} tabIndex={-1}>
+                        <Comparisons ref={containerRef} tabIndex={-1} hasComp={images[id].before ? true : false}>
                             <SlideButton onClick={() => ChangeComparisons("left")} aria-label="Click to see Previous Comparisons">‹</SlideButton>
-                            <Span>Before</Span>
-                            <ImageContainer>
-                                {images[id]?.before.map(image =>
-                                    <OpenModalButton 
-                                        id={image.id} 
-                                        key={image.id} 
-                                        onClick={(e) => ToggleModal(e)}
-                                        aria-label="Open Gallery Modal"
-                                    >
-                                        <GatsbyImg 
-                                            image={image.thumb}
-                                            alt="Genuine Builders York"
-                                        />
-                                    </OpenModalButton>
-                                )}
-                            </ImageContainer>
-                            <Span>After</Span>
-                            <ImageContainer>
-                                {images[id]?.after.map(image =>
-                                    <OpenModalButton 
-                                        id={image.id} 
-                                        key={image.id} 
-                                        onClick={(e) => ToggleModal(e)} 
-                                        aria-label="Open Gallery Modal"
-                                    >
-                                        <GatsbyImg 
-                                            image={image.thumb}
-                                            alt="Genuine Builders York"
-                                        />
-                                    </OpenModalButton>
-                                )}
+                            {images[id].before?.length && 
+                                <>
+                                    <Span>Before</Span>
+                                    <ImageContainer hasComp={images[id].before ? true : false}>
+                                        {images[id].before.map(image =>
+                                            <OpenModalButton 
+                                                id={image.id} 
+                                                key={image.id} 
+                                                onClick={(e) => ToggleModal(e)}
+                                                aria-label="Open Gallery Modal"
+                                            >
+                                                <GatsbyImg 
+                                                    image={image.thumb}
+                                                    alt={image.description || "Genuine Builders York"}
+                                                />
+                                            </OpenModalButton>
+                                        )}
+                                    </ImageContainer>
+                                    <Span>After</Span>
+                                </>
+                            }
+                            <ImageContainer hasComp={images[id].before ? true : false}>
+                                {images[id].after ? 
+                                    images[id].after.map(image =>
+                                        <OpenModalButton 
+                                            id={image.id} 
+                                            key={image.id} 
+                                            onClick={(e) => ToggleModal(e)} 
+                                            aria-label="Open Gallery Modal"
+                                        >
+                                            <GatsbyImg 
+                                                image={image.thumb}
+                                                alt={image.description || "Genuine Builders York"}
+                                            />
+                                        </OpenModalButton>
+                                    )
+                                : <p>to be updated.</p>}
                             </ImageContainer>
                             <SlideButton onClick={() => ChangeComparisons("right")} aria-label="Click to see Next Comparisons" right>›</SlideButton>
                         </Comparisons>
                     }
-                    {images?.length ? 
+                    {images?.[0].before || images?.[0].after ? 
                         <Grid>
-                            {images?.map((image, i) => 
-                                <Button 
-                                    onClick={(e) => {
-                                        hasSwapped(false);
-                                        ShowComparisons(e);
-                                    }} 
-                                    id={image.id ? image.id : ""}
-                                    key={image.id ? image.id : ""}
-                                    aria-label="View Comparisons"
-                                    $active={active && i === id ? true : false}
-                                >
-                                    <GatsbyImg image={image.after[0].thumb} alt="Genuine Builders York" />
-                                </Button>
-                            )}
+                            {images.map((image, i) => {
+                                const imageExists = image.galleryPreview && image.galleryPreview - 1 <= image.after?.length;
+
+                                if (image.before || image.after) {
+                                    return (
+                                        <Button 
+                                            onClick={(e) => {
+                                                hasSwapped(false);
+                                                ShowComparisons(e);
+                                            }} 
+                                            id={image.id ? image.id : ""}
+                                            key={image.id ? image.id : ""}
+                                            aria-label="View Comparisons"
+                                            $active={active && i === id ? true : false}
+                                        >
+                                            <GatsbyImg 
+                                                image={image.after?.[imageExists ? image.galleryPreview - 1 : 0].thumb || image.before?.[0].thumb} 
+                                                alt={image.after?.description || "Genuine Builders York"}
+                                            />
+                                        </Button>
+                                    )
+                                } 
+
+                                return null;
+                            })}
                         </Grid>
                     : 
                         <div style={{ textAlign: "center" }}>
@@ -227,6 +243,12 @@ const Button = styled.button`
     border-style: none;
     border: ${props => props.$active ? "2px solid #a0df6d80" : ""};
     box-shadow: ${props => props.$active ? "0 0 10px #a0df6d80" : ""};
+
+    &:hover {
+        div { // target GatsbyImage
+            opacity: 0.6;
+        };
+    };
 `;
 
 const GatsbyImg = styled(GatsbyImage)`
@@ -237,8 +259,8 @@ const GatsbyImg = styled(GatsbyImage)`
 
 const Comparisons = styled.div`
     display: grid;
-    grid-template-columns: 1fr repeat(2, 3fr) 1fr;
-    grid-template-rows: 1.5em 1fr;
+    grid-template-columns: ${props => props.hasComp ? "1fr repeat(2, 3fr) 1fr" : "auto 1fr auto"};
+    grid-template-rows: ${props => props.hasComp ? "1.5em" : null} 1fr;
     margin-bottom: 1em;
     padding: 1em;
     background-color: #475159;
@@ -263,16 +285,12 @@ const Span = styled.span`
 
     @media only screen and (max-width: 560px) {
         margin: 0;
-        padding-left: 0;
-        padding-right: 0.5em;
         padding-top: 0.75em;
         border-top: 0.75em solid #2a3035;
         grid-row: 2;
 
         :nth-of-type(1) {
             grid-column: 1;
-            padding-left: 0.5em;
-            padding-right: 0;
         };
     };
 
@@ -287,32 +305,16 @@ const ImageContainer = styled.div`
 
     @media only screen and (max-width: 560px) {
         grid-row: 3;
-        margin-left: 1em;
-        margin-right: 0.5em;
-
-        &:nth-of-type(2) {
-            margin-left: 0.5em;
-            margin-right: 1em;
-        };
-    };
-
-    @media only screen and (max-width: 414px) {
-        margin-left: 1.25em;
-        margin-right: 0.5em;
-
-        &:nth-of-type(2) {
-            margin-left: 0.5em;
-            margin-right: 1.25em;
-        };
+        grid-column: ${props => !props.hasComp ? "span 2" : null};
+        margin-top: ${props => !props.hasComp ? "0.5em" : null};
     };
 `;
 
 const OpenModalButton = styled(Button)`
-    display: block;
     padding: 0em;
     border: 3px solid #2a3035;
     border-radius: 6px;
-    margin: 0.5em auto;
+    margin: 0.5em;
 `;
 
 const SlideButton = styled.button`
