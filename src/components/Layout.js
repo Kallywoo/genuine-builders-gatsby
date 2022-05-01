@@ -4,7 +4,7 @@ import { createGlobalStyle } from 'styled-components';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
-import background from '../images/background-main.png';
+import background from '../images/background-main.jpg';
 
 export const Layout = ({ children, location }) => {
     return (
@@ -24,6 +24,8 @@ const GlobalStyle = createGlobalStyle`
     };
 
     html {
+        scroll-behavior: smooth; // mainly used for comparisons in gallery
+
         @media only screen and (max-width: 560px) {
             scroll-padding-top: 66px; // stops mobile header blocking top of targeted elements
         };

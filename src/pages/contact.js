@@ -6,14 +6,8 @@ import { Catalogue } from '../components/Catalogue';
 import { ContactForm } from '../components/ContactForm';
 import SEO from '../components/SEO';
 
-import screw from '../images/screw.png';
-
 export const data = graphql`
     query {
-        contentfulArticleHeader {
-            id
-            list
-        }
         allContentfulContact {
             contacts: nodes {
                 id
@@ -27,8 +21,6 @@ export const data = graphql`
 `;
 
 export default function Contact({ data }) {
-
-    const { list } = data.contentfulArticleHeader;
 
     const { contacts } = data.allContentfulContact;
     contacts.sort((a, b) => a.listOrder - b.listOrder);

@@ -27,13 +27,13 @@ export const Carousel = ({ duration = 5000 }) => {
                     file {
                         url
                     }
+                    description
                 }
             }
         }
     `);
 
     const images = data.contentfulImageCarousel.images || [placeholder];
-
     const isImages = images.length > 1;
 
     const initialState = {
@@ -45,7 +45,7 @@ export const Carousel = ({ duration = 5000 }) => {
         next: 1,
         switched: false,
         swiped: false,
-        duration: duration > 899 ? duration : 900
+        duration: (duration > 899) ? duration : 900
     };
 
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -58,18 +58,17 @@ export const Carousel = ({ duration = 5000 }) => {
         onSwipedLeft: () => forceDirection("FORCE_SWIPE", "right"),
         onSwipedRight: () => forceDirection("FORCE_SWIPE", "left"),
         preventDefaultTouchmoveEvent: true,
-        trackMouse: false
+        trackMouse: true
     });
 
     useEffect(() => {
-
         const calculateDirection = (i) => {
             const maxLength = images.length - 1;
 
             if (state.direction === "right") { // do these images have one after their position to jump to? if not then reset to beginning
-                return i !== maxLength ? ++i : 0;
+                return (i !== maxLength) ? ++i : 0;
             } else { // do these images (going left) have one before their position to jump to? if not then reset to end
-                return i !== 0 ? --i : maxLength;
+                return (i !== 0) ? --i : maxLength;
             };
         };
 
@@ -118,16 +117,14 @@ export const Carousel = ({ duration = 5000 }) => {
         if (!state.sliding && isImages) {
 
             dispatch({
-                type: type,
+                type,
                 payload: {direction}
             });
-
         };
     };
 
     const slideToIndex = (e) => {
         if (!state.sliding) {
-
             newIndex.current = images.findIndex((image) => image.id === e.target.id); // get index of selected in images array
             
             if (state.current !== newIndex.current) {
@@ -161,29 +158,39 @@ export const Carousel = ({ duration = 5000 }) => {
     return (
         <CarouselContainer 
             onMouseEnter={() => {
-                return isImages ? dispatch({ type: "SET_ACTIVE", payload: {active: false} }) : null;
+                return isImages 
+                    ? dispatch({ type: "SET_ACTIVE", payload: {active: false} }) 
+                    : null;
             }} 
             onMouseLeave={() => {
-                return isImages ? dispatch({ type: "SET_ACTIVE", payload: {active: true} }) : null;
+                return isImages 
+                    ? dispatch({ type: "SET_ACTIVE", payload: {active: true} }) 
+                    : null;
             }}
         >
             <ImageContainer>
                 {isImages &&
                     <>
-                        <SlideButton onClick={() => forceDirection("FORCE_SLIDES", "left")} aria-label="Previous Image">‹</SlideButton>
-                        <SlideButton onClick={() => forceDirection("FORCE_SLIDES", "right")} aria-label="Next Image" right>›</SlideButton>
+                        <SlideButton 
+                            onClick={() => forceDirection("FORCE_SLIDES", "left")} 
+                            aria-label="Previous Image"
+                        >‹</SlideButton>
+                        <SlideButton 
+                            onClick={() => forceDirection("FORCE_SLIDES", "right")} 
+                            aria-label="Next Image" right
+                        >›</SlideButton>
                     </>
                 }
                 <div {...handlers}>
                     <LastImage 
                         src={images[state.previous]?.file?.url} 
-                        alt="Genuine Builders York" 
+                        alt={images[state.previous]?.description || "Genuine Builders York"}
                         sliding={state.sliding && state.direction === "left" ? true : false}
                         swiped={state.swiped ? true : false}
                     />
                     <CurrentImage 
                         src={isImages ? images[state.current]?.file?.url : images[0]} 
-                        alt="Genuine Builders York"
+                        alt={isImages ? images[state.current]?.description : "Genuine Builders York"}
                         sliding={state.sliding ? true : false}
                         swiped={state.swiped ? true : false} 
                         $direction={state.direction}
@@ -192,7 +199,7 @@ export const Carousel = ({ duration = 5000 }) => {
                     />
                     <NextImage 
                         src={images[state.next]?.file?.url} 
-                        alt="Genuine Builders York"
+                        alt={images[state.next]?.description || "Genuine Builders York"}
                         sliding={state.sliding && state.direction === "right" ? true : false}
                         swiped={state.swiped ? true : false}
                     />
@@ -204,7 +211,7 @@ export const Carousel = ({ duration = 5000 }) => {
                                 <IndexButton 
                                     id={image.id} 
                                     onClick={(e) => slideToIndex(e)}
-                                    aria-label={i + 1 === state.current + 1 ? `Current Image` : `Skip to Image ${i + 1}`}
+                                    aria-label={(i + 1 === state.current + 1) ? `Current Image` : `Skip to Image ${i + 1}`}
                                 />
                             </Index>
                         )}
@@ -218,6 +225,7 @@ export const Carousel = ({ duration = 5000 }) => {
 const CarouselContainer = styled.div`
     margin: 1em auto;
     position: relative;
+    cursor: grab;
 
     @media only screen and (max-width: 414px) {
         margin-top: 0;
@@ -301,6 +309,7 @@ const LastImage = styled.img`
     /* duration: */ ${props => props.swiped ? "0.4s" : "0.8s"}
     /* easing: */ ease-out
     /* direction: */ forwards;
+    pointer-events: none;
 `;
 
 const CurrentImage = styled.img`
@@ -313,12 +322,10 @@ const CurrentImage = styled.img`
     /* duration: */ ${props => props.swiped ? "0.4s" : "0.8s"}
     /* easing: */ ease-out
     /* direction: */ forwards;
+    pointer-events: none;
 `;
 
-const NextImage = styled.img`
-    position: absolute;
-    width: 100%;
-    top: 0;
+const NextImage = styled(LastImage)`
     left: 100%;
     animation: 
     /* name: */ ${props => props.sliding ? NextSlide : null}
@@ -366,20 +373,7 @@ const Indexes = styled.ol`
     };
 
     @media only screen and (max-width: 560px) {
-        top: 5%;
-        width: max-content;
-        height: min-content;
-        margin: 0 auto;
         display: none;
-    };
-
-    @media only screen and (max-width: 414px) {
-        position: relative;
-        padding: 1em 0em;
-        gap: 1em 2em;
-        background-color: #1f2327;
-        width: 100%;
-        order: 1;
     };
 `;
 
@@ -401,11 +395,6 @@ const IndexButton = styled.button`
     cursor: pointer;
 
     @media only screen and (max-width: 768px) {
-        width: 20px;
-        height: 20px;
-    };
-
-    @media only screen and (max-width: 414px) {
         width: 20px;
         height: 20px;
     };
