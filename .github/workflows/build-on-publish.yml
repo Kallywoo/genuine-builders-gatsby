@@ -1,8 +1,7 @@
-name: deploy-app-on-s3
+name: build-on-contentful-publish-event
 on:
-  pull_request:
-    branches: [main]
-    types: [closed]
+  repository_dispatch:
+    types: [publish-event]
 jobs:
   deploy:
     runs-on: ubuntu-latest
