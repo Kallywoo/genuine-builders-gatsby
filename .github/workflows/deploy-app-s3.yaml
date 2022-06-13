@@ -7,8 +7,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      AWS_S3_BUCKET_NAME: genuinebuilders
-      AWS_CF_DISTRIBUTION_ID: E7OK71DHLISI4
+      AWS_S3_BUCKET_NAME: genuinebuilders.co.uk
+      AWS_CF_DISTRIBUTION_ID: E14M5HI48O0MRL
     strategy:
       matrix:
         node-version: [15.x]
