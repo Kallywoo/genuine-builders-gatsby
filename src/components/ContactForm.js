@@ -37,7 +37,8 @@ export const ContactForm = () => {
 
         const body = {
             ...values,
-            RECIPIENT: `${process.env.SES_RECIPIENT}`
+            RECIPIENT: process.env.SES_RECIPIENT.split(","),
+            subject: "****JOB ENQUIRY****"
         };
 
         // console.log(body);
